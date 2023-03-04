@@ -42,19 +42,153 @@ Veh <- brvehins1a
 
 Veh$ClaimNb <- Veh$ClaimNbRob + Veh$ClaimNbPartColl + Veh$ClaimNbTotColl + Veh$ClaimNbFire + Veh$ClaimNbOther
 Veh$ClaimAmount <- Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl + Veh$ClaimAmountFire + Veh$ClaimAmountOther
-VehClaimOnly <- Veh[Veh$ClaimAmount > 0, ]
 
+# Ajustement des niveaux
+levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
+```
+
+## Nettoyage des données
+```{r cleanup, message=FALSE, echo = FALSE}
+
+Veh <- Veh[Veh$VehYear > 1900,]
+
+```
+
+```{r data, message=FALSE, echo = FALSE}
+
+## Création d'une nouvelle base de donnée pour l'analyse exploratoire
+VehClaimOnly <- Veh[Veh$ClaimAmount > 0, ]
+VehClaimOnly$LogClaim <- log(VehClaimOnly$ClaimAmount)
 ```
 
 
 ```{r HistClaim, message=FALSE, echo = FALSE}
 
-ggplot(VehClaimOnly, aes(x=ClaimAmount))+
+ggplot(VehClaimOnly, aes(x=LogClaim))+
   geom_histogram()
 
 ```
 
+\clearpage
+
+## Genre
+
+La variable *Gender* a quatre niveaux : "Male", "Female", "Corporate" et NA. Il y a 17 749 personnes pour lesquelles le genre est manquant.
+
+```{r BoxplotGender, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=Gender, y=LogClaim)) + 
+  geom_boxplot() +
+  ylab("Logarithme des réclamations")
+
+```
+
 \clearpage 
+
+## Âge du conducteur
+
+```{r BoxplotAge, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) + 
+  geom_boxplot() +
+  ylab("Logarithme des réclamations")
+
+```
+
+\clearpage 
+
+## Année du véhicule
+
+```{r PointsAgeVeh, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) + 
+  geom_point(alpha = 0.3) +
+  ylab("Logarithme des réclamations")
+
+```
+
+
+\clearpage 
+
+## Modèle du véhicule
+
+```{r ExprReg, message=FALSE, echo = FALSE}
+
+for(i in seq(length(VehClaimOnly$VehModel)))
+  attr(regexpr("^([a-zA-Z]|[0-9]|[-])* -", VehClaimOnly$VehModel[i]), "match.length") - 2
+
+```
+
+
+\clearpage 
+
+## Area
+
+```{r BoxplotArea, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=Area, y=LogClaim)) + 
+  geom_boxplot() +
+  ylab("Logarithme des réclamations")
+
+```
+
+\clearpage
+
+## State
+
+```{r BoxplotState, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=State, y=LogClaim)) + 
+  geom_boxplot() +
+  ylab("Logarithme des réclamations")
+
+```
+
+\clearpage
+
+
+## Exposition
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c| } 
+ \hline
+ Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
+ \hline
+ `r mean(Veh$ExposTotal)` & `r median(Veh$ExposTotal)` & `r sd(Veh$ExposTotal)` & `r min(Veh$ExposTotal)` & `r max(Veh$ExposTotal)` \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+```{r PointsExposition, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=ExposTotal, y=LogClaim)) + 
+  geom_point(alpha = 0.3) +
+  ylab("Logarithme des réclamations")
+
+```
+
+\clearpage 
+
+## Prime Totale
+
+```{r PointsPrime, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=PremTotal, y=LogClaim)) + 
+  geom_point(alpha = 0.3) +
+  ylab("Logarithme des réclamations")
+
+```
+
+
+## SumInsAvg
+
+```{r PointsInsAvg, message=FALSE, echo = FALSE}
+
+ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) + 
+  geom_point(alpha = 0.3) +
+  ylab("Logarithme des réclamations")
+
+```
 
 
 # Conclusion
