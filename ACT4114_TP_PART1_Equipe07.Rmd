@@ -27,9 +27,13 @@ if(length(liste.paquetage[!inst]) > 0) install.packages(liste.paquetage[!inst])
 lapply(liste.paquetage, require, character.only = TRUE)
 ```
 
-# Titre 1
+# Introduction
 
-## Analyse Exploratoire
+Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations (tous types confondus). 
+
+\clearpage  
+
+# Analyse Exploratoire
 
 ```{r donnees, include=FALSE, echo = FALSE}
 
@@ -52,4 +56,4 @@ ggplot(VehClaimOnly, aes(x=ClaimAmount))+
 
 
 
-# Titre 2
+# Titre 3
