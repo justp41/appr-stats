@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.3)  4 MAR 2023 13:51
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.3)  4 MAR 2023 14:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**ACT4114_TP_PART1_EquipeXX.tex
-(./ACT4114_TP_PART1_EquipeXX.tex
+**ACT4114_TP_PART1_Equipe07.tex
+(./ACT4114_TP_PART1_Equipe07.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-02-24> (/usr/local/texlive/2022/texmf-dist/tex/latex
 /base/article.cls
@@ -395,8 +395,8 @@ Package: xurl 2022/01/09 v 0.10 modify URL breaks
 File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count290
 \l__pdf_internal_box=\box53
-) (./ACT4114_TP_PART1_EquipeXX.aux)
-\openout1 = `ACT4114_TP_PART1_EquipeXX.aux'.
+) (./ACT4114_TP_PART1_Equipe07.aux)
+\openout1 = `ACT4114_TP_PART1_Equipe07.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 92.
 LaTeX Font Info:    ... okay on input line 92.
@@ -515,39 +515,39 @@ Package microtype Info: Character `029' is missing
 (microtype)             in font `T1/lmr/m/sc/12'.
 (microtype)             Ignoring protrusion settings for this character.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-31.
+32.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-31.
+32.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-131.
+132.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-131.
+132.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 131.
+(Font)              <10> on input line 132.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 131.
+(Font)              <7> on input line 132.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 131.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 131
+(Font)              <5> on input line 132.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 132
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 131
+LaTeX Font Info:    Trying to load font information for U+msb on input line 132
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -557,47 +557,57 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 <ul-actuariat.png, id=4, 154.176pt x 26.2581pt>
 File: ul-actuariat.png Graphic file (type png)
 <use ul-actuariat.png>
-Package pdftex.def Info: ul-actuariat.png  used on input line 149.
+Package pdftex.def Info: ul-actuariat.png  used on input line 151.
 (pdftex.def)             Requested size: 154.1756pt x 26.25803pt.
 [1
 
 {/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./ul-ac
-tuariat.png>] (./ACT4114_TP_PART1_EquipeXX.toc)
+tuariat.png>] (./ACT4114_TP_PART1_Equipe07.toc)
 \tf@toc=\write3
-\openout3 = `ACT4114_TP_PART1_EquipeXX.toc'.
+\openout3 = `ACT4114_TP_PART1_Equipe07.toc'.
 
 
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.163 \clearpage
+l.165 \clearpage
                  [1
 
-] [2
+]
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf, id=30, 459.7175p
+t x 313.17pt>
+File: ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf Graphic file
+ (type pdf)
+<use ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf>
+Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim
+-1.pdf  used on input line 173.
+(pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
+[2
 
-] (./ACT4114_TP_PART1_EquipeXX.aux) ) 
+ <./ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf>] (./ACT4114_T
+P_PART1_Equipe07.aux) ) 
 Here is how much of TeX's memory you used:
- 14792 strings out of 478268
- 239998 string characters out of 5846348
- 560100 words of memory out of 5000000
- 32702 multiletter control sequences out of 15000+600000
+ 14800 strings out of 478268
+ 240489 string characters out of 5846348
+ 560110 words of memory out of 5000000
+ 32708 multiletter control sequences out of 15000+600000
  531758 words of font info for 95 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  74i,11n,77p,1022b,404s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/
-enc/dvips/lm/lm-ec.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/l
-m/lmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx12.p
-fb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/
-local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texli
-ve/2022/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/tex
-mf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2022/texmf-dist/fo
-nts/type1/public/lm/lmri12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/
-public/lm/lmro10.pfb>
-Output written on ACT4114_TP_PART1_EquipeXX.pdf (3 pages, 220698 bytes).
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/l
+m-ec.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><
+/usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local
+/texlive/2022/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/
+2022/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texmf-
+dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/
+type1/public/lm/lmri10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publ
+ic/lm/lmri12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmro
+10.pfb>
+Output written on ACT4114_TP_PART1_Equipe07.pdf (3 pages, 231645 bytes).
 PDF statistics:
- 86 PDF objects out of 1000 (max. 8388607)
- 62 compressed objects within 1 object stream
+ 94 PDF objects out of 1000 (max. 8388607)
+ 67 compressed objects within 1 object stream
  10 named destinations out of 1000 (max. 500000)
- 36894 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 36899 words of extra memory for PDF output out of 42996 (max. 10000000)
 
