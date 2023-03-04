@@ -54,6 +54,7 @@ ggplot(VehClaimOnly, aes(x=ClaimAmount))+
 
 ```
 
+\clearpage 
 
 
-# Titre 3
+# Conclusion
