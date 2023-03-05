@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.3)  4 MAR 2023 17:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.3)  4 MAR 2023 22:41
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -577,138 +577,137 @@ l.165 \clearpage
 ] [2
 
 ]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 1
-81.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-183.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf, id=55, 459.7175p
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf, id=59, 459.7175p
 t x 315.1775pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf Graphic file
  (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim
--1.pdf  used on input line 185.
+-1.pdf  used on input line 208.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
 [3
 
  <./ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf>]
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGender-1.pdf, id=71, 459.7
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGender-1.pdf, id=80, 459.7
 175pt x 313.17pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGender-1.pdf Graphic 
 file (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGender-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGe
-nder-1.pdf  used on input line 200.
+nder-1.pdf  used on input line 254.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [4
 
  <./ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGender-1.pdf>]
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAge-1.pdf, id=84, 459.7175
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAge-1.pdf, id=94, 459.7175
 pt x 315.1775pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAge-1.pdf Graphic fil
 e (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAge-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAg
-e-1.pdf  used on input line 211.
+e-1.pdf  used on input line 265.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
 [5
 
  <./ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAge-1.pdf>]
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAgeVeh-1.pdf, id=97, 459.71
-75pt x 313.17pt>
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAgeVeh-1.pdf, id=108, 459.7
+175pt x 313.17pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAgeVeh-1.pdf Graphic f
 ile (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAgeVeh-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAge
-Veh-1.pdf  used on input line 222.
+Veh-1.pdf  used on input line 277.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [6
 
  <./ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAgeVeh-1.pdf>] [7
 
 ]
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotArea-1.pdf, id=120, 464.73
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotArea-1.pdf, id=132, 464.73
 625pt x 313.17pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotArea-1.pdf Graphic fi
 le (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotArea-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAr
-ea-1.pdf  used on input line 238.
+ea-1.pdf  used on input line 294.
 (pdftex.def)             Requested size: 464.74928pt x 313.17877pt.
 [8
 
  <./ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotArea-1.pdf>]
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotState-1.pdf, id=133, 459.7
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotState-1.pdf, id=146, 459.7
 175pt x 313.17pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotState-1.pdf Graphic f
 ile (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotState-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotSt
-ate-1.pdf  used on input line 249.
+ate-1.pdf  used on input line 305.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [9
 
  <./ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotState-1.pdf>]
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExposition-1.pdf, id=146, 4
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExposition-1.pdf, id=161, 4
 59.7175pt x 315.1775pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExposition-1.pdf Graph
 ic file (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExposition-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExp
-osition-1.pdf  used on input line 270.
+osition-1.pdf  used on input line 326.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
 [10
 
  <./ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExposition-1.pdf>]
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf, id=164, 459.71
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf, id=179, 459.71
 75pt x 313.17pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf Graphic fi
 le (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPri
-me-1.pdf  used on input line 281.
+me-1.pdf  used on input line 338.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
-<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf, id=165, 459.7
+[11
+
+ <./ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf>]
+<ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf, id=197, 459.7
 175pt x 315.1775pt>
 File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf Graphic f
 ile (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsIns
-Avg-1.pdf  used on input line 290.
+Avg-1.pdf  used on input line 350.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-[11
+[12
 
- <./ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf>] [12 <./ACT
-4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf>] (./ACT4114_TP_PA
-RT1_Equipe07.aux) ) 
+ <./ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf>] [13
+
+] [14
+
+] (./ACT4114_TP_PART1_Equipe07.aux) ) 
 Here is how much of TeX's memory you used:
- 14994 strings out of 478268
- 246076 string characters out of 5846348
- 560483 words of memory out of 5000000
- 32853 multiletter control sequences out of 15000+600000
- 532465 words of font info for 98 fonts, out of 8000000 for 9000
+ 14952 strings out of 478268
+ 245348 string characters out of 5846348
+ 562333 words of memory out of 5000000
+ 32795 multiletter control sequences out of 15000+600000
+ 532303 words of font info for 101 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  74i,11n,77p,1022b,404s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ts
-1.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</usr/lo
-cal/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texliv
-e/2022/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2022/tex
-mf-dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2022/texmf-dist/f
-onts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/
-public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/l
-mri10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri12.pfb>
-</usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmro10.pfb></usr/loca
-l/texlive/2022/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on ACT4114_TP_PART1_Equipe07.pdf (13 pages, 15987991 bytes).
+{/usr/local/texlive/2022/texmf-dist/fonts/
+enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/l
+m-mathsy.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-mathit.e
+nc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}</usr/local
+/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2
+022/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2022/texmf-
+dist/fonts/type1/public/lm/lmcsc10.pfb></usr/local/texlive/2022/texmf-dist/font
+s/type1/public/lm/lmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/pu
+blic/lm/lmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr
+12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr
+/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/tex
+live/2022/texmf-dist/fonts/type1/public/lm/lmri12.pfb></usr/local/texlive/2022/
+texmf-dist/fonts/type1/public/lm/lmro10.pfb></usr/local/texlive/2022/texmf-dist
+/fonts/type1/public/lm/lmsy10.pfb>
+Output written on ACT4114_TP_PART1_Equipe07.pdf (15 pages, 15998327 bytes).
 PDF statistics:
- 295 PDF objects out of 1000 (max. 8388607)
- 229 compressed objects within 3 object streams
- 40 named destinations out of 1000 (max. 500000)
- 37019 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 340 PDF objects out of 1000 (max. 8388607)
+ 268 compressed objects within 3 object streams
+ 55 named destinations out of 1000 (max. 500000)
+ 37035 words of extra memory for PDF output out of 42996 (max. 10000000)
 

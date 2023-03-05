@@ -48,6 +48,7 @@ levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 ```
 
 ## Nettoyage des données
+
 ```{r cleanup, message=FALSE, echo = FALSE}
 
 Veh <- Veh[Veh$VehYear > 1900,]
@@ -61,21 +62,64 @@ VehClaimOnly <- Veh[Veh$ClaimAmount > 0, ]
 VehClaimOnly$LogClaim <- log(VehClaimOnly$ClaimAmount)
 ```
 
+## Somme des réclamations
 
-```{r HistClaim, message=FALSE, echo = FALSE}
+La somme des réclamations est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0 `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. 
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c| } 
+ \hline
+ Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
+ \hline
+ `r mean(na.omit(Veh$ClaimAmount))` & `r median(na.omit(Veh$ClaimAmount))` & `r sd(na.omit(Veh$ClaimAmount))` & `r min(na.omit(Veh$ClaimAmount))` & `r max(na.omit(Veh$ClaimAmount))` \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+Puisqu'un montant de réclamation peut prendre des valeurs assez élevées, les graphiques peuvent devenir plutôt difficiles à lire. Pour remédier à ce problème, le logarithme du montant total des réclamations est utilisé dans les graphiques. Cela a cependant un coût : toutes les réclamations de 0 doivent être retirées du jeu de données. Des informations supplémentaires par rapport à ces réclamations seront ajoutées au long de l'analyse exploratoire pour pallier ce défaut.
+
+
+```{r HistClaim, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:HistRecl}Histogramme du logarithme des montants de réclamation"}
 
 ggplot(VehClaimOnly, aes(x=LogClaim))+
   geom_histogram()
 
 ```
 
+Comme on peut voir dans la Figure \ref{fig:HistRecl}, il
+
 \clearpage
 
 ## Genre
 
-La variable *Gender* a quatre niveaux : "Male", "Female", "Corporate" et NA. Il y a 17 749 personnes pour lesquelles le genre est manquant.
+La variable **Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*.
 
-```{r BoxplotGender, message=FALSE, echo = FALSE}
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c| } 
+ \hline
+  & Male & Female & Corporate & NA \\ 
+ \hline
+ Fréquence & `r sum(na.omit(Veh$Gender) == "Male")` & `r sum(na.omit(Veh$Gender) == "Female")` & `r sum(na.omit(Veh$Gender) == "Corporate")` & `r sum(is.na(Veh$Gender))` \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+Lorsqu'on regarde la quantité de ces personnes qui n'ont pas fait de réclamation, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate* et que *NA* semble avoir la plus petite proportion de personnes n'ayant fait aucune réclamation.
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c| } 
+ \hline
+  & Male & Female & Corporate & NA \\ 
+ \hline
+ Aucune réclamation & `r sum(na.omit(Veh$ClaimAmount[Veh$Gender == "Male"] == 0))` & `r sum(na.omit(Veh$ClaimAmount[Veh$Gender == "Female"]) == 0)` & `r sum(na.omit(Veh$ClaimAmount[Veh$Gender == "Corporate"]) == 0)` & `r sum(na.omit(Veh$ClaimAmount[is.na(Veh$Gender)] == 0))` \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+En terme de sévérité, les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer un peu plus de réclamations extrêmes lorsque le genre est inconnu.
+
+
+```{r BoxplotGender, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotGender}Logarithme des réclamations par genre"}
 
 ggplot(VehClaimOnly, aes(x=Gender, y=LogClaim)) + 
   geom_boxplot() +
@@ -87,7 +131,7 @@ ggplot(VehClaimOnly, aes(x=Gender, y=LogClaim)) +
 
 ## Âge du conducteur
 
-```{r BoxplotAge, message=FALSE, echo = FALSE}
+```{r BoxplotAge, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotDrivAge}Logarithme des réclamations par Âge de conducteur"}
 
 ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) + 
   geom_boxplot() +
@@ -99,7 +143,7 @@ ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) +
 
 ## Année du véhicule
 
-```{r PointsAgeVeh, message=FALSE, echo = FALSE}
+```{r PointsAgeVeh, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointVehYear}Logarithme des réclamations en fonction de l'année du véhicule"}
 
 ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) + 
   geom_point(alpha = 0.3) +
@@ -112,7 +156,7 @@ ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) +
 
 ## Modèle du véhicule
 
-```{r ExprReg, message=FALSE, echo = FALSE}
+```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
 
 for(i in seq(length(VehClaimOnly$VehModel)))
   attr(regexpr("^([a-zA-Z]|[0-9]|[-])* -", VehClaimOnly$VehModel[i]), "match.length") - 2
@@ -124,7 +168,7 @@ for(i in seq(length(VehClaimOnly$VehModel)))
 
 ## Area
 
-```{r BoxplotArea, message=FALSE, echo = FALSE}
+```{r BoxplotArea, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotArea}Logarithme des réclamations par région"}
 
 ggplot(VehClaimOnly, aes(x=Area, y=LogClaim)) + 
   geom_boxplot() +
@@ -136,7 +180,7 @@ ggplot(VehClaimOnly, aes(x=Area, y=LogClaim)) +
 
 ## State
 
-```{r BoxplotState, message=FALSE, echo = FALSE}
+```{r BoxplotState, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotState}Logarithme des réclamations par état"}
 
 ggplot(VehClaimOnly, aes(x=State, y=LogClaim)) + 
   geom_boxplot() +
@@ -159,7 +203,7 @@ ggplot(VehClaimOnly, aes(x=State, y=LogClaim)) +
 \end{tabular}
 \end{center}
 
-```{r PointsExposition, message=FALSE, echo = FALSE}
+```{r PointsExposition, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointExpos}Logarithme des réclamations en fonction de l'exposition"}
 
 ggplot(VehClaimOnly, aes(x=ExposTotal, y=LogClaim)) + 
   geom_point(alpha = 0.3) +
@@ -171,7 +215,7 @@ ggplot(VehClaimOnly, aes(x=ExposTotal, y=LogClaim)) +
 
 ## Prime Totale
 
-```{r PointsPrime, message=FALSE, echo = FALSE}
+```{r PointsPrime, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPrem}Logarithme des réclamations en fonction de la prime totale"}
 
 ggplot(VehClaimOnly, aes(x=PremTotal, y=LogClaim)) + 
   geom_point(alpha = 0.3) +
@@ -179,10 +223,11 @@ ggplot(VehClaimOnly, aes(x=PremTotal, y=LogClaim)) +
 
 ```
 
+\clearpage
 
 ## SumInsAvg
 
-```{r PointsInsAvg, message=FALSE, echo = FALSE}
+```{r PointsInsAvg, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
 
 ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) + 
   geom_point(alpha = 0.3) +
@@ -190,5 +235,11 @@ ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) +
 
 ```
 
+
+\clearpage
+
+# Traitement des valeurs manquantes
+
+\clearpage
 
 # Conclusion
