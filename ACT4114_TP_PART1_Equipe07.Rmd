@@ -172,7 +172,8 @@ for(i in seq(length(VehClaimOnly$VehModel)))
 
 ggplot(VehClaimOnly, aes(x=Area, y=LogClaim)) + 
   geom_boxplot() +
-  ylab("Logarithme des réclamations")
+  ylab("Logarithme des réclamations") +
+  coord_flip()
 
 ```
 
@@ -184,7 +185,8 @@ ggplot(VehClaimOnly, aes(x=Area, y=LogClaim)) +
 
 ggplot(VehClaimOnly, aes(x=State, y=LogClaim)) + 
   geom_boxplot() +
-  ylab("Logarithme des réclamations")
+  ylab("Logarithme des réclamations") +
+  coord_flip()
 
 ```
 
