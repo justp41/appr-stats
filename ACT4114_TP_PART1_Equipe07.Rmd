@@ -49,10 +49,12 @@ levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 
 ## Nettoyage des données
 
+Les variables «State» et «StateAb» représentenet la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seuelement conserver la variable «State».
+
 ```{r cleanup, message=FALSE, echo = FALSE}
 
 Veh <- Veh[Veh$VehYear > 1900,]
-
+Veh <- Veh[-8] #retirer StateAb du jeu de données
 ```
 
 ```{r data, message=FALSE, echo = FALSE}
@@ -248,6 +250,9 @@ ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) +
 
 md.pattern(Veh, rotate.names = T)
 ```
+
+On remarque que lorsque la variable «Area» est inconnue, la variables «State» l'est aussi. De plus, lorsque «VehModel» est manquante, «VehGroup» l'est également. Cela est tout à fait intuitif, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu. La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations.
+
 \clearpage
 
 # Conclusion

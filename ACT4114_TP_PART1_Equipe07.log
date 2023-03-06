@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.5)  6 MAR 2023 13:32
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2023.3.5)  6 MAR 2023 14:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -583,7 +583,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf Graphic file
  (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/HistClaim
--1.pdf  used on input line 208.
+-1.pdf  used on input line 212.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [3
 
@@ -594,7 +594,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGender-1.pdf Graphic
 file (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGender-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotGe
-nder-1.pdf  used on input line 254.
+nder-1.pdf  used on input line 258.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [4
 
@@ -605,7 +605,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAge-1.pdf Graphic fil
 e (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAge-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAg
-e-1.pdf  used on input line 265.
+e-1.pdf  used on input line 269.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [5
 
@@ -616,7 +616,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAgeVeh-1.pdf Graphic f
 ile (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAgeVeh-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsAge
-Veh-1.pdf  used on input line 277.
+Veh-1.pdf  used on input line 281.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [6
 
@@ -629,7 +629,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotArea-1.pdf Graphic fi
 le (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotArea-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotAr
-ea-1.pdf  used on input line 294.
+ea-1.pdf  used on input line 298.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [8
 
@@ -640,7 +640,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotState-1.pdf Graphic f
 ile (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotState-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/BoxplotSt
-ate-1.pdf  used on input line 305.
+ate-1.pdf  used on input line 309.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [9
 
@@ -651,7 +651,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExposition-1.pdf Graph
 ic file (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExposition-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsExp
-osition-1.pdf  used on input line 326.
+osition-1.pdf  used on input line 330.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [10
 
@@ -662,7 +662,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf Graphic fi
 le (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPrime-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsPri
-me-1.pdf  used on input line 338.
+me-1.pdf  used on input line 342.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [11
 
@@ -673,7 +673,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf Graphic f
 ile (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsInsAvg-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/PointsIns
-Avg-1.pdf  used on input line 350.
+Avg-1.pdf  used on input line 354.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [12
 
@@ -684,7 +684,7 @@ File: ACT4114_TP_PART1_Equipe07_files/figure-latex/MissingDataVis-1.pdf Graphic
  file (type pdf)
 <use ACT4114_TP_PART1_Equipe07_files/figure-latex/MissingDataVis-1.pdf>
 Package pdftex.def Info: ACT4114_TP_PART1_Equipe07_files/figure-latex/MissingDa
-taVis-1.pdf  used on input line 364.
+taVis-1.pdf  used on input line 370.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 [13
 
@@ -692,11 +692,11 @@ taVis-1.pdf  used on input line 364.
 
 ] (./ACT4114_TP_PART1_Equipe07.aux) ) 
 Here is how much of TeX's memory you used:
- 15085 strings out of 476024
- 247216 string characters out of 5794017
+ 15091 strings out of 476024
+ 247293 string characters out of 5794017
  1857382 words of memory out of 5000000
- 35162 multiletter control sequences out of 15000+600000
- 575331 words of font info for 105 fonts, out of 8000000 for 9000
+ 35163 multiletter control sequences out of 15000+600000
+ 575497 words of font info for 107 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  77i,11n,81p,1022b,516s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {c:/texlive/2022/texmf-dist/fonts/enc/dvip
@@ -711,10 +711,10 @@ ype1/public/lm/lmr10.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr1
 22/texmf-dist/fonts/type1/public/lm/lmri10.pfb><c:/texlive/2022/texmf-dist/font
 s/type1/public/lm/lmri12.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/lm/
 lmro10.pfb><c:/texlive/2022/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on ACT4114_TP_PART1_Equipe07.pdf (15 pages, 15999520 bytes).
+Output written on ACT4114_TP_PART1_Equipe07.pdf (15 pages, 16000930 bytes).
 PDF statistics:
- 337 PDF objects out of 1000 (max. 8388607)
- 272 compressed objects within 3 object streams
- 57 named destinations out of 1000 (max. 500000)
+ 338 PDF objects out of 1000 (max. 8388607)
+ 273 compressed objects within 3 object streams
+ 58 named destinations out of 1000 (max. 500000)
  37048 words of extra memory for PDF output out of 42996 (max. 10000000)
 
