@@ -33,7 +33,7 @@ Pour ce travail, l'objectif est de construire un modèle de prime pure pour la s
 
 \clearpage  
 
-# Analyse Exploratoire
+# Création d'une nouvelle variable explicative
 
 ```{r donnees, include=FALSE, echo = FALSE}
 
@@ -41,11 +41,24 @@ data(brvehins1a)
 Veh <- brvehins1a
 
 Veh$ClaimNb <- Veh$ClaimNbRob + Veh$ClaimNbPartColl + Veh$ClaimNbTotColl + Veh$ClaimNbFire + Veh$ClaimNbOther
-Veh$ClaimAmount <- Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl + Veh$ClaimAmountFire + Veh$ClaimAmountOther
+Veh$ClaimAmount <- (Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl + Veh$ClaimAmountFire + Veh$ClaimAmountOther)/Veh$ExposTotal
 
 # Ajustement des niveaux
 levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
+
 ```
+
+```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
+
+Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel, regex="^([a-zA-Z]|[0-9]|[-])*\\ -"))
+Veh$VehManuf <- as.factor(Veh$VehManuf)
+lvl <- levels(Veh$VehManuf)
+lvl[which(table(Veh$VehManuf) < 100)] <- "Other"
+levels(Veh$VehManuf) <- lvl
+
+```
+
+# Analyse Exploratoire
 
 ## Nettoyage des données
 
@@ -160,8 +173,20 @@ ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) +
 
 ```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
 
-for(i in seq(length(VehClaimOnly$VehModel)))
-  attr(regexpr("^([a-zA-Z]|[0-9]|[-])* -", VehClaimOnly$VehModel[i]), "match.length") - 2
+VehManufGraph <- VehClaimOnly$VehManuf
+lvl2 <- levels(VehClaimOnly$VehManuf)
+lvl2[which(table(VehClaimOnly$VehManuf) < 1000)] <- "Other"
+levels(VehManufGraph) <- lvl2
+
+```
+
+
+```{r BoxplotManuf, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotArea}Logarithme des réclamations par région"}
+
+ggplot(VehClaimOnly, aes(x=VehManufGraph, y=LogClaim)) + 
+  geom_boxplot() +
+  ylab("Logarithme des réclamations") +
+  coord_flip()
 
 ```
 
