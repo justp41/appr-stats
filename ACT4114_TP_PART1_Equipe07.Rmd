@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r paquetages, message=FALSE, eval=TRUE, include=FALSE, echo = FALSE}
 ### Liste des paquetages
-liste.paquetage <- c("ggplot2", "CASdatasets", "mice")
+liste.paquetage <- c("ggplot2", "CASdatasets", "mice", "stringi")
 ### On installe les paquetages de la liste qu'on a pas déjà
 inst <- liste.paquetage %in% installed.packages()
 if(length(liste.paquetage[!inst]) > 0) install.packages(liste.paquetage[!inst])
@@ -73,7 +73,7 @@ Veh <- Veh[-8] #retirer StateAb du jeu de données
 ```{r data, message=FALSE, echo = FALSE}
 
 ## Création d'une nouvelle base de donnée pour l'analyse exploratoire
-VehClaimOnly <- Veh[Veh$ClaimAmount > 0, ]
+VehClaimOnly <- Veh[Veh$ClaimAmount > 0 & Veh$ClaimAmount < 99999999999, ]
 VehClaimOnly$LogClaim <- log(VehClaimOnly$ClaimAmount)
 ```
 
@@ -104,6 +104,28 @@ ggplot(VehClaimOnly, aes(x=LogClaim))+
 Comme on peut voir dans la Figure \ref{fig:HistRecl}, il
 
 \clearpage
+
+## Exposition
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c| } 
+ \hline
+ Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
+ \hline
+ `r mean(Veh$ExposTotal)` & `r median(Veh$ExposTotal)` & `r sd(Veh$ExposTotal)` & `r min(Veh$ExposTotal)` & `r max(Veh$ExposTotal)` \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+```{r PointsExposition, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointExpos}Logarithme des réclamations en fonction de l'exposition"}
+
+ggplot(VehClaimOnly, aes(x=ExposTotal, y=LogClaim)) + 
+  geom_point(alpha = 0.3) +
+  ylab("Logarithme des réclamations")
+
+```
+
+\clearpage 
 
 ## Genre
 
@@ -162,7 +184,8 @@ ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) +
 
 ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) + 
   geom_point(alpha = 0.3) +
-  ylab("Logarithme des réclamations")
+  ylab("Logarithme des réclamations") +
+  geom_smooth()
 
 ```
 
@@ -171,11 +194,11 @@ ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) +
 
 ## Modèle du véhicule
 
-```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
+```{r, message=FALSE, echo = FALSE, warning = FALSE}
 
 VehManufGraph <- VehClaimOnly$VehManuf
 lvl2 <- levels(VehClaimOnly$VehManuf)
-lvl2[which(table(VehClaimOnly$VehManuf) < 1000)] <- "Other"
+lvl2[which(table(VehClaimOnly$VehManuf) < 500)] <- "Other"
 levels(VehManufGraph) <- lvl2
 
 ```
@@ -195,9 +218,18 @@ ggplot(VehClaimOnly, aes(x=VehManufGraph, y=LogClaim)) +
 
 ## Area
 
+```{r ModifArea, message=FALSE, echo = FALSE, warning = FALSE}
+
+AreaGraph <- VehClaimOnly$Area
+lvl3 <- levels(VehClaimOnly$Area)
+lvl3[which(table(VehClaimOnly$Area) < 2000)] <- "Other"
+levels(AreaGraph) <- lvl3
+
+```
+
 ```{r BoxplotArea, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotArea}Logarithme des réclamations par région"}
 
-ggplot(VehClaimOnly, aes(x=Area, y=LogClaim)) + 
+ggplot(VehClaimOnly, aes(x=AreaGraph, y=LogClaim)) + 
   geom_boxplot() +
   ylab("Logarithme des réclamations") +
   coord_flip()
@@ -208,9 +240,18 @@ ggplot(VehClaimOnly, aes(x=Area, y=LogClaim)) +
 
 ## State
 
+```{r ModifState, message=FALSE, echo = FALSE, warning = FALSE}
+
+StateGraph <- VehClaimOnly$State
+lvl4 <- levels(VehClaimOnly$State)
+lvl4[which(table(VehClaimOnly$State) < 2000)] <- "Other"
+levels(StateGraph) <- lvl4
+
+```
+
 ```{r BoxplotState, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotState}Logarithme des réclamations par état"}
 
-ggplot(VehClaimOnly, aes(x=State, y=LogClaim)) + 
+ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) + 
   geom_boxplot() +
   ylab("Logarithme des réclamations") +
   coord_flip()
@@ -219,28 +260,6 @@ ggplot(VehClaimOnly, aes(x=State, y=LogClaim)) +
 
 \clearpage
 
-
-## Exposition
-
-\begin{center}
-\begin{tabular}{ |c|c|c|c|c|c|c| } 
- \hline
- Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
- \hline
- `r mean(Veh$ExposTotal)` & `r median(Veh$ExposTotal)` & `r sd(Veh$ExposTotal)` & `r min(Veh$ExposTotal)` & `r max(Veh$ExposTotal)` \\ 
- \hline
-\end{tabular}
-\end{center}
-
-```{r PointsExposition, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointExpos}Logarithme des réclamations en fonction de l'exposition"}
-
-ggplot(VehClaimOnly, aes(x=ExposTotal, y=LogClaim)) + 
-  geom_point(alpha = 0.3) +
-  ylab("Logarithme des réclamations")
-
-```
-
-\clearpage 
 
 ## Prime Totale
 
