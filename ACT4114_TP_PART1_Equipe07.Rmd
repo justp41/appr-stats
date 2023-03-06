@@ -50,7 +50,8 @@ levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 
 ```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
 
-Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel, regex="^([a-zA-Z]|[0-9]|[-])*\\ -"))
+Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel, regex="^([a-zA-Z]|[0-9]|[-]|[ ])* -"))
+Veh$VehManuf[Veh$VehModel == "Outros"] <- "Other"
 Veh$VehManuf <- as.factor(Veh$VehManuf)
 lvl <- levels(Veh$VehManuf)
 lvl[which(table(Veh$VehManuf) < 100)] <- "Other"
