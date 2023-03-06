@@ -313,9 +313,14 @@ chisq.test(Veh$VehYear, manq, correct = F)
 ```
 Toutes les *p-values* approchent de 0, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. Cette conclusion est identique pour la variable «VehGroup».
 
+En effectuant des tests du khi-carré de Pearson, il est apparent que la variable «VehManuf» n'est pas MCAR. Toutes les *p-values* sont confortablement plus petites que 0,05.
+
 ```{r, message=FALSE, echo=FALSE}
-manq <- is.na(Veh$VehGroup)
+manq <- is.na(Veh$VehManuf)
 chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$VehYear, manq, correct = F)
 ```
 
 
