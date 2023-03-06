@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r paquetages, message=FALSE, eval=TRUE, include=FALSE, echo = FALSE}
 ### Liste des paquetages
-liste.paquetage <- c("ggplot2", "CASdatasets")
+liste.paquetage <- c("ggplot2", "CASdatasets", "mice")
 ### On installe les paquetages de la liste qu'on a pas déjà
 inst <- liste.paquetage %in% installed.packages()
 if(length(liste.paquetage[!inst]) > 0) install.packages(liste.paquetage[!inst])
@@ -242,6 +242,12 @@ ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) +
 
 # Traitement des valeurs manquantes
 
+## Visualisation
+
+```{r MissingDataVis, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
+
+md.pattern(Veh, rotate.names = T)
+```
 \clearpage
 
 # Conclusion
