@@ -251,7 +251,35 @@ ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) +
 md.pattern(Veh, rotate.names = T)
 ```
 
-On remarque que lorsque la variable «Area» est inconnue, la variables «State» l'est aussi. De plus, lorsque «VehModel» est manquante, «VehGroup» l'est également. Cela est tout à fait intuitif, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu. La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations.
+On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables, nous les retirons du jeu de données.
+
+```{r, message=FALSE, echo=FALSE}
+Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
+```
+
+
+De plus, lorsque «VehModel» est manquante, «VehGroup» l'est également. Cela est tout à fait intuitif, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu. On test l'hypothèse que la variable «VehModel» est MCAR.
+
+```{r, message=FALSE}
+manq <- is.na(Veh$VehModel)
+chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$VehYear, manq, correct = F)
+```
+Toutes les *p-values* approchent de 0, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. Cette conclusion est identique pour la variable «VehGroup».
+
+```{r, message=FALSE, echo=FALSE}
+manq <- is.na(Veh$VehGroup)
+chisq.test(Veh$Gender, manq, correct = F)
+```
+
+
+La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations.
+
+
+
+Dans SumInsAvg remplacer les 0 par NA et traiter.
 
 \clearpage
 
