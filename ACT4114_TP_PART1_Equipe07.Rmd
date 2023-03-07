@@ -264,24 +264,57 @@ ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) +
 
 ## Prime Totale
 
+La prime totale est une variable qui reflète la somme totale de primes pour une combinaison véhicule-assuré donnée. Afin de mieux comprendre la distribution de cette variable, plusieurs analyses peuvent être effectuées:
+
 ```{r PointsPrime, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPrem}Logarithme des réclamations en fonction de la prime totale"}
 
-ggplot(VehClaimOnly, aes(x=PremTotal, y=LogClaim)) + 
+ggplot(VehClaimOnly, aes(x=log(PremTotal)))+
+    geom_histogram()
+
+```
+
+La distribution des primes totales présente une asymétrie négative, avec un nombre plus important de primes de faible montant par rapport à celles de montant élevé.
+
+```{r PointsPrime, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPrem}Logarithme des réclamations en fonction de la prime totale"}
+
+ggplot(VehClaimOnly, aes(x=log(PremTotal), y=LogClaim)) + 
   geom_point(alpha = 0.3) +
   ylab("Logarithme des réclamations")
 
 ```
+la prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle, car le but d'un modèle de prime pure est de la prédire. Cependant, on remarque que les primes plus basses sont associées à une plus grande variance dans les montants de réclamations. En conséquence, notre modèle devrait être plus performant pour prédire les réclamations des gros risques, c'est à dire, ceux qui ont une grande mesure d'exposition et des dimensions risquées.
 
 \clearpage
 
 ## SumInsAvg
 
+Cette variable correspond au montant moyen assuré aggrégé au grain de la table, et représente la limite supérieure des réclamations possibles. On peut explorer cet hypothèse avec le graphique suivant:
+
+```{r PreuveIns, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
+library(gridExtra)
+
+ggplot(VehClaimOnly,aes(x=ClaimAmount/ClaimNb, y=SumInsAvg, col = ClaimAmount/ClaimNb < SumInsAvg))+
+    geom_point(alpha=0.4)+
+    stat_function(fun=function(x) x)
+
+```
+
+On voit donc que dans la très grande majorité des cas, le montant assuré moyen est supérieure au montant réclamé par réclamation. On peut croire que les points sous la courbe représente des observations où le montant a assuré diminué au cours de la période assuré. En effet, Si le montant assuré a été plus élevé à un moment et a diminué subitement, il est possible que la mesure de sévérité moyenne soit plus élevé que le montant d'assurance moyen.
+
+
 ```{r PointsInsAvg, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
 
 ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) + 
   geom_point(alpha = 0.3) +
-  ylab("Logarithme des réclamations")
+  ylab("Logarithme des réclamations")+
+    geom_smooth()
+```
+```{r PointsInsAvg, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
 
+ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) + 
+  geom_point(alpha = 0.3) +
+  ylab("Logarithme des réclamations")+
+    geom_smooth()
 ```
 
 
