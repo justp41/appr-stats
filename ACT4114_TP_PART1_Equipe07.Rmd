@@ -296,7 +296,7 @@ ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) +
 md.pattern(Veh, rotate.names = T)
 ```
 
-On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables, nous les retirons du jeu de données.
+On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables et que lorsque ces variable sont absentes aucune autre variable l'est, nous les retirons du jeu de données.
 
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
@@ -325,9 +325,25 @@ chisq.test(Veh$VehYear, manq, correct = F)
 ```
 
 
-La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations.
+La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations. Faison un diagramme boxplot pour voir s'il y a un lien entre la présence d'une observation manquante pour cette variable et le montant des réclamations.
 
+```{r, DrivAgelinkwithClaims, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:DrivAgelinkwithClaims}Lien entre le patron de non-réponse de la variable «DrivAge» et le logarithme des réclamations"}
+manq <- is.na(VehClaimOnly$DrivAge)
+ggplot(VehClaimOnly, aes(x = manq, y = log(ClaimAmount))) +
+  geom_boxplot() +
+  ylab("Logarithme des réclamations") +
+  xlab("Patron de non-réponse de «DrivAge»")
+```
+Il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Même que la figure précédente soulève la possibilité qu'on est en présence de donéées manquantes NMAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Il sera nécessaire d'imputer les données manquantes.
 
+```{r, message=FALSE, echo=FALSE}
+manq <- is.na(Veh$DrivAge)
+chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$VehManuf, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$Area, manq, correct = F)
+chisq.test(Veh$ClaimAmount, manq, correct = F)
+```
 
 Dans SumInsAvg remplacer les 0 par NA et traiter.
 
