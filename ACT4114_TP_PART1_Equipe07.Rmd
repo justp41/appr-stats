@@ -367,7 +367,7 @@ ggplot(VehClaimOnly, aes(x = manq, y = log(ClaimAmount))) +
   ylab("Logarithme des réclamations") +
   xlab("Patron de non-réponse de «DrivAge»")
 ```
-Il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Même que la figure précédente soulève la possibilité qu'on est en présence de donéées manquantes NMAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Il sera nécessaire d'imputer les données manquantes.
+Il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Même que la figure précédente soulève la possibilité qu'on est en présence de donéées manquantes NMAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Il sera nécessaire d'imputer les données manquantes. Vu la possibilité que le patron de non-réponse soit NMAR, la méthode d'imputation stochastique multiple sera privilégié.
 
 ```{r, message=FALSE, echo=FALSE}
 manq <- is.na(Veh$DrivAge)
