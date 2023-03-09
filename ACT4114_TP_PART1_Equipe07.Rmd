@@ -67,7 +67,7 @@ Les variables «State» et «StateAb» représentent la même information, l'une
 
 ```{r cleanup, message=FALSE, echo = FALSE}
 
-Veh <- Veh[Veh$VehYear > 1900,]
+Veh <- Veh[Veh$VehYear > 1900,] #### THIS INTRODUCES A ROW OF NAs
 Veh <- Veh[-8] #retirer StateAb du jeu de données
 ```
 
