@@ -63,7 +63,7 @@ levels(Veh$VehManuf) <- lvl
 
 ## Nettoyage des données
 
-Les variables «State» et «StateAb» représentenet la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seuelement conserver la variable «State».
+Les variables «State» et «StateAb» représentent la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seulement conserver la variable «State».
 
 ```{r cleanup, message=FALSE, echo = FALSE}
 
@@ -80,7 +80,7 @@ VehClaimOnly$LogClaim <- log(VehClaimOnly$ClaimAmount)
 
 ## Somme des réclamations
 
-La somme des réclamations est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0 `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. 
+La somme des réclamations est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0, soit `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. 
 
 \begin{center}
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
