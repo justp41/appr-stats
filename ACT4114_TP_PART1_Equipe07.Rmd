@@ -322,7 +322,6 @@ Visualisons les données manquantes.
 
 ```{r MissingDataVis, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
 
-md.pattern(Veh, rotate.names = T) # retirer avant remise
 md.pattern(Veh[, colSums(is.na(Veh)) != 0], rotate.names = T)
 ```
 Dans la figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
@@ -371,7 +370,7 @@ ggplot(VehClaimOnly, aes(x = manq, y = log(ClaimAmount))) +
   xlab("Patron de non-réponse de «DrivAge»")
 ```
 Il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Il ne sera pas possible d'utiliser l'approche des cas complets, donc une méthode d'imputation stochastique sera privilégié. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE}
 manq <- is.na(Veh$DrivAge)
 chisq.test(Veh$Gender, manq, correct = F)
 chisq.test(Veh$VehManuf, manq, correct = F)
@@ -381,8 +380,8 @@ chisq.test(Veh$ClaimAmount, manq, correct = F)
 ```
 
 
-La variable «Gender» est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, «DrivAge» l'est également. Testons l'hypothèse nulle que le patron de non-réponse de la variable «Gender» est MCAR.
-```{r, message=FALSE, echo=FALSE}
+La variable «Gender» est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, «DrivAge» l'est également. Cela devra être pris en considération s'il est nécessaire d'imputer les données manquantes. Testons l'hypothèse nulle que le patron de non-réponse de la variable «Gender» est MCAR.
+```{r, message=FALSE}
 manq <- is.na(Veh$Gender)
 chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$VehManuf, manq, correct = F)
@@ -394,6 +393,9 @@ Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes 
 
 
 Dans SumInsAvg remplacer les 0 par NA et traiter.
+
+## Imputation des données manquantes
+
 
 
 \clearpage
