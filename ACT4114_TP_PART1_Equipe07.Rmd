@@ -318,10 +318,15 @@ ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) +
 
 ## Visualisation
 
+Visualisons les données manquantes.
+
 ```{r MissingDataVis, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
 
-md.pattern(Veh, rotate.names = T)
+md.pattern(Veh, rotate.names = T) # retirer avant remise
+md.pattern(Veh[, colSums(is.na(Veh)) != 0], rotate.names = T)
 ```
+Dans la figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
+
 
 On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables et que lorsque ces variable sont absentes aucune autre variable l'est, nous les retirons du jeu de données.
 
@@ -330,7 +335,7 @@ Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
 ```
 
 
-De plus, lorsque «VehModel» est manquante, «VehGroup» l'est également. Cela est tout à fait intuitif, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu. On test l'hypothèse que la variable «VehModel» est MCAR.
+Lorsque «VehModel» est manquante, «VehGroup» et «VehManuf» le sont également. Cela est tout à fait intuitif, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable «VehManuf» est créée à partir de la variable «VehModel». On test l'hypothèse que la variable «VehModel» est MCAR avec des tests du khi-carré de Pearson.
 
 ```{r, message=FALSE}
 manq <- is.na(Veh$VehModel)
@@ -339,18 +344,22 @@ chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$VehYear, manq, correct = F)
 ```
-Toutes les *p-values* approchent de 0, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. Cette conclusion est identique pour la variable «VehGroup».
+Toutes les *p-values* approchent de 0, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. Les tests de Cette conclusion est identique pour les variables «VehGroup» et «VehManuf».
 
-En effectuant des tests du khi-carré de Pearson, il est apparent que la variable «VehManuf» n'est pas MCAR. Toutes les *p-values* sont confortablement plus petites que 0,05.
-
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE, echo=FALSE, results='hide'}
+manq <- is.na(Veh$VehGroup)
+chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$VehYear, manq, correct = F)
+```
+```{r, message=FALSE, echo=FALSE, results='hide'}
 manq <- is.na(Veh$VehManuf)
 chisq.test(Veh$Gender, manq, correct = F)
 chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$VehYear, manq, correct = F)
 ```
-
 
 La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations. Faisons un diagramme boxplot pour voir s'il y a un lien entre la présence d'une observation manquante pour cette variable et le montant des réclamations.
 
@@ -371,7 +380,21 @@ chisq.test(Veh$Area, manq, correct = F)
 chisq.test(Veh$ClaimAmount, manq, correct = F)
 ```
 
+
+La variable «Gender» est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, «DrivAge» l'est également. Testons l'hypothèse nulle que le patron de non-réponse de la variable «Gender» est MCAR.
+```{r, message=FALSE, echo=FALSE}
+manq <- is.na(Veh$Gender)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$VehManuf, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$Area, manq, correct = F)
+chisq.test(Veh$VehYear, manq, correct = F)
+```
+Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes de la variable «Gender» ne sont pas MCAR.  
+
+
 Dans SumInsAvg remplacer les 0 par NA et traiter.
+
 
 \clearpage
 
