@@ -266,7 +266,7 @@ ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) +
 
 La prime totale est une variable qui reflète la somme totale de primes pour une combinaison véhicule-assuré donnée. Afin de mieux comprendre la distribution de cette variable, plusieurs analyses peuvent être effectuées:
 
-```{r PointsPrime, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPrem}Logarithme des réclamations en fonction de la prime totale"}
+```{r PointsPrimeHist, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPremHist}Logarithme des réclamations en fonction de la prime totale"}
 
 ggplot(VehClaimOnly, aes(x=log(PremTotal)))+
     geom_histogram()
@@ -309,13 +309,7 @@ ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) +
   ylab("Logarithme des réclamations")+
     geom_smooth()
 ```
-```{r PointsInsAvg, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
 
-ggplot(VehClaimOnly, aes(x=SumInsAvg, y=LogClaim)) + 
-  geom_point(alpha = 0.3) +
-  ylab("Logarithme des réclamations")+
-    geom_smooth()
-```
 
 
 \clearpage
