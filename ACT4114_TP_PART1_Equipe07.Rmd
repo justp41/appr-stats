@@ -332,7 +332,7 @@ On remarque que lorsque la variable «Area» est inconnue, la variable «State»
 Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
 ```
 
-Il y a seulement une observation avec un donnée manquante pour la variable «VehYear». En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons du jeu de données.
+Il y a seulement une observation avec une donnée manquante pour la variable «VehYear». En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons du jeu de données.
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$VehYear),]
 ```
