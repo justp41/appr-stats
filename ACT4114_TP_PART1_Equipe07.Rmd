@@ -67,7 +67,7 @@ Les variables «State» et «StateAb» représentent la même information, l'une
 
 ```{r cleanup, message=FALSE, echo = FALSE}
 
-Veh <- Veh[Veh$VehYear > 1900,] #### THIS INTRODUCES A ROW OF NAs
+Veh <- Veh[Veh$VehYear > 1900 | is.na(Veh$VehYear),] #### THIS INTRODUCES A ROW OF NAs
 Veh <- Veh[-8] #retirer StateAb du jeu de données
 ```
 
@@ -328,11 +328,14 @@ Dans la figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observation
 
 
 On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables et que lorsque ces variable sont absentes aucune autre variable l'est, nous les retirons du jeu de données.
-
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
 ```
 
+Il y a seulement une observation avec un donnée manquante pour la variable «VehYear». En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons du jeu de données.
+```{r, message=FALSE, echo=FALSE}
+Veh <- Veh[!is.na(Veh$VehYear),]
+```
 
 Lorsque «VehModel» est manquante, «VehGroup» et «VehManuf» le sont également. Cela est tout à fait intuitif, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable «VehManuf» est créée à partir de la variable «VehModel». On test l'hypothèse que la variable «VehModel» est MCAR avec des tests du khi-carré de Pearson.
 
