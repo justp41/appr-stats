@@ -125,7 +125,7 @@ Comme on peut voir dans la Figure \ref{fig:HistRecl}, la distribution est quelqu
 
 ## Exposition
 
-Le minimum est de 1/365, soit d'une journée.
+Le minimum est de 1/365, soit d'une journée. Il semble y avoir beaucoup d'annulations de même que des clients particulièrement fidèles puisque la médiane d'exposition est de moins d'un an tandis que la moyenne est de plus de 3 ans.
 
 \begin{center}
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
@@ -159,7 +159,7 @@ La variable **Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*.
 \end{tabular}
 \end{center}
 
-Lorsqu'on regarde la quantité de ces personnes qui n'ont pas fait de réclamation, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate* et que *NA* semble avoir la plus petite proportion de personnes n'ayant fait aucune réclamation.
+En analysant le lien avec les réclamations, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate*. Étant donné la très grande exposition qui y est associée, c'est évidemment absurde et on en déduit que l'assureur demande l'information sur le conducteur lorsqu'un accident survient et qu'une réclamation est nécessaire. Ainsi, il ajoute l'information rétrospectivement et il sera donc possiblement nécessaire de régrouper le genre *Corporate* avec les clients pour lesquels l'information sur le genre est inconnue. 
 
 \begin{center}
 \begin{tabular}{ |c|c|c|c|c| } 
@@ -178,7 +178,7 @@ ggplot(VehClaimOnly, aes(x=Gender, y=LogClaim)) +
   ylab("Logarithme des réclamations")
 ```
 
-En terme de sévérité, les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer à la Figure \ref{fig:BPGen} des réclamations plus élevées en moyenne lorsque le genre est inconnu.
+En terme de sévérité, les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer à la Figure \ref{fig:BPGen} des réclamations plus élevées en moyenne lorsque le genre est inconnu. Il faut admettre que c'est plutôt surprenant de prime abord. Il convient de noter que c'est l'échantillon le plus faible des trois catégories, mais avec plus de 10 000 réclamations, il est difficile de blâmer le hasard. Une analyse du patron de non-réponse inclaunt les autres variables s'impose.
 
 \clearpage 
 
@@ -196,7 +196,7 @@ La variable de l'âge du conducteur n'est pas continue, mais plutôt divisée en
 \end{tabular}
 \end{center}
 
-À la Figure \ref{fig:BPDrivAge}, il est possible d'observer que la tranche d'âge 26-35 ans a, en moyenne, les réclamations les plus élevées. Cela est plutôt intuitif car les jeunes conducteurs sont reconnus pour être plus téméraires et causer plus d'accidents. Une hypothèse vraisemblable pour expliquer que le groupe de conducteurs de 18 à 25 ans n'a pas des réclamations plus élevées est qu'ils n'ont tout simplement pas les moyens de se procurer des véhicules de grande valeur. 
+À la Figure \ref{fig:BPDrivAge}, il est possible d'observer que la tranche d'âge 26-35 ans a, en moyenne, les réclamations les plus élevées. Cela est plutôt intuitif car les jeunes conducteurs sont reconnus pour être plus téméraires et ainsi causer plus d'accidents. Une hypothèse vraisemblable pour expliquer que le groupe de conducteurs de 18 à 25 ans n'a pas des réclamations plus élevées est qu'ils n'ont tout simplement pas les moyens de se procurer des véhicules de grande valeur. 
 
 Encore une fois, lorsque l'information est manquante, les réclamations sont bien plus élevées en moyenne.
 
@@ -237,7 +237,8 @@ ggplot(VehClaimOnly, aes(x=VehManufGraph, y=LogClaim)) +
   ylab("Logarithme des réclamations") +
   coord_flip()
 ```
-
+Le graphique ci-haut présente la distribution du logarithme des réclamations selon les principales marques de véhicules présentes dans le jeu de données. Sans surprise, les véhicules les plus luxueux comme *Mercedes-Benz* sont titulaires des réclamations les plus importantes en moyenne. Cependant, comme cette base de donnée n'origine pas du Québec, il est important de rappeler qu'une partie non négligeable des réclamations sert à payer les dommages corporels de même que les dommage matériels à autrui. Donc même si l'assuré possède un véhicule plus abordable comme une *Kia*, on observe quand même quelques réclamations très substantielles. 
+Enfin, conformément aux variables précédentes, les réclamations sont significativement plus couteûses en moyenne lorsque la marque du véhicule est inconnue.
 
 \clearpage 
 
@@ -257,6 +258,8 @@ ggplot(VehClaimOnly, aes(x=AreaGraph, y=LogClaim)) +
   coord_flip()
 ```
 
+Similairement, voici les réclamations dans les régions les plus récurrentes de la base de données. Sans surprise, les réclamations varient beaucoup même au sein d'une même région et il est difficile d'établir des constats en lesquels l'analyste avisé pourrait réellement avoir confiance. 
+
 \clearpage
 
 ## State
@@ -275,6 +278,8 @@ ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) +
   coord_flip()
 ```
 
+Un constat similaire est de mise quant au lien entre la ville (ou région administrative selon le cas) et les réclamations. S'il est vrai qu'en moyenne les réclamations sont plus faibles dans la ville Rio de Janeiro qui a assurément la réputation d'accueillir une population moins aisée que Santa Catarina par exemple, il n'en demeure pas moins que cela varie énormément et des extrèmes sont observés dans toutes les villes du graphique et il est difficile, de prime abord, de ne pas attribuer les écarts au simple hasard. 
+
 \clearpage
 
 
@@ -287,14 +292,14 @@ ggplot(VehClaimOnly, aes(x=log(PremTotal)))+
     geom_histogram()
 ```
 
-La distribution des primes totales présente une asymétrie négative, avec un nombre plus important de primes de faible montant par rapport à celles de montant élevé.
+Tout d'abord, l'histogramme révèle que la distribution des primes totales présente une asymétrie négative, avec un nombre plus important de primes de faible montant par rapport à celles de montant élevé.
 
 ```{r PointsPrime, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPrem}Logarithme des réclamations en fonction de la prime totale"}
 ggplot(VehClaimOnly, aes(x=log(PremTotal), y=LogClaim)) + 
   geom_point(alpha = 0.3) +
   ylab("Logarithme des réclamations")
 ```
-la prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle, car le but d'un modèle de prime pure est de la prédire. Cependant, on remarque que les primes plus basses sont associées à une plus grande variance dans les montants de réclamations. En conséquence, notre modèle devrait être plus performant pour prédire les réclamations des gros risques, c'est à dire, ceux qui ont une grande mesure d'exposition et des dimensions risquées.
+La prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle. Effectivement, il va sans dire que le but de notre projet est de développer notre propre modèle de calcul de la prime. Il est important de garder à l'esprit que la prime est assurément calculée à partir des variables présentées plus haut, en soi, elle n'apporte donc aucune nouvelle information puisqu'elle est elle même une combiaison de toutes les autres variables. Ainsi, il serait contre-productif de tenter de réutiliser la prime dans notre modèle.  On remarque que les primes plus basses sont associées à une plus grande variance dans les montants de réclamations. Cela correspond bien aux attentes, un modèle typique devrait être plus performant pour prédire les réclamations des gros risques, c'est à dire, ceux qui ont une grande mesure d'exposition et des dimensions risquées.
 
 \clearpage
 
