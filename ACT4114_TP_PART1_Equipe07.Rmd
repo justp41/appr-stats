@@ -49,12 +49,6 @@ Sa structure est très intuitive. En bref, chaque assuré est associé à une li
 data(brvehins1a)
 Veh <- brvehins1a
 
-Veh$ClaimNb <- Veh$ClaimNbRob + Veh$ClaimNbPartColl + Veh$ClaimNbTotColl + Veh$ClaimNbFire + Veh$ClaimNbOther
-
-Veh$ClaimAmount <- Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl + Veh$ClaimAmountFire + Veh$ClaimAmountOther
-Veh$ExposTotal[Veh$ExposTotal == 0] <- NA # Ajustement pour mettre exposition de 0 comme NA
-Veh$TotClaimExpUnit <- Veh$ClaimAmount/Veh$ExposTotal
-
 # Ajustement des niveaux
 levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 ```
@@ -84,11 +78,18 @@ Avant de lancer le développement de notre modèle, quelques ajustements sont re
 Veh <- Veh[-8]
 
 Veh$VehYear[Veh$VehYear < 1900 | is.na(Veh$VehYear)] <- NA
+
+Veh$ClaimNb <- Veh$ClaimNbRob + Veh$ClaimNbPartColl + Veh$ClaimNbTotColl + Veh$ClaimNbFire + Veh$ClaimNbOther
+
+Veh$ClaimAmount <- Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl + Veh$ClaimAmountFire + Veh$ClaimAmountOther
+Veh <- Veh[Veh$ExposTotal != 0, ] # Ajustement pour supprimer les expositions de 0
+Veh$TotClaimExpUnit <- Veh$ClaimAmount/Veh$ExposTotal
 ```
 
 ```{r data, message=FALSE, echo = FALSE}
-## Création d'une nouvelle base de donnée pour l'analyse exploratoire
-VehClaimOnly <- Veh[Veh$TotClaimExpUnit > 0, ]
+## Création d'une nouvelle base de donnée pour les graphiques
+VehClaimOnly <- Veh[Veh$ClaimAmount > 0, ]
+VehClaimOnly <- VehClaimOnly[!is.na(VehClaimOnly$ClaimAmount),]
 VehClaimOnly$LogClaim <- log(VehClaimOnly$TotClaimExpUnit)
 ```
 
@@ -104,7 +105,7 @@ La somme des réclamations associées à chaque assuré est la variable réponse
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
  \hline
- `r round(mean(na.omit(Veh$ClaimAmount)), 1)` & `r round(median(na.omit(Veh$ClaimAmount)), 1)` & `r round(sd(na.omit(Veh$ClaimAmount)), 1)` & `r round(min(na.omit(Veh$ClaimAmount)), 1)` & `r round(max(na.omit(Veh$ClaimAmount)), 1)` \\ 
+ `r round(mean(na.omit(Veh$TotClaimExpUnit)), 1)` & `r round(median(na.omit(Veh$TotClaimExpUnit)), 1)` & `r round(sd(na.omit(Veh$TotClaimExpUnit)), 1)` & `r round(min(na.omit(Veh$TotClaimExpUnit)), 1)` & `r round(max(na.omit(Veh$TotClaimExpUnit)), 1)` \\ 
  \hline
 \end{tabular}
 \end{center}
@@ -211,10 +212,25 @@ ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) +
 
 ## Année du véhicule
 
-```{r PointsAgeVeh, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointVehYear}Logarithme des réclamations en fonction de l'année du véhicule"}
+Une autre variable explicative disponible est l'année du véhicule. 
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c|c| } 
+ \hline
+ Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
+ \hline
+ `r round(mean(na.omit(Veh$VehYear)), 1)` & `r median(na.omit(Veh$VehYear))` & `r round(sd(na.omit(Veh$VehYear)), 1)` & `r min(na.omit(Veh$VehYear))` & `r max(na.omit(Veh$VehYear))` \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+Selon ce qu'on peut observer à la Figure \ref{fig:PointVY} avec à la régression, l'année du véhicule semble avoir une relation croissante avec le montant des réclamations.
+
+```{r PointsAgeVeh, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointVY}Logarithme des réclamations en fonction de l'année du véhicule"}
 ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) + 
   geom_point(alpha = 0.3) +
   ylab("Logarithme des réclamations") +
+  xlab("Année du véhicule") +
   geom_smooth()
 ```
 
@@ -242,7 +258,7 @@ Enfin, conformément aux variables précédentes, les réclamations sont signifi
 
 \clearpage 
 
-## Area
+## Région
 
 ```{r ModifArea, message=FALSE, echo = FALSE, warning = FALSE}
 AreaGraph <- VehClaimOnly$Area
@@ -251,18 +267,19 @@ lvl3[which(table(VehClaimOnly$Area) < 2000)] <- "Other"
 levels(AreaGraph) <- lvl3
 ```
 
-```{r BoxplotArea, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotArea}Logarithme des réclamations par région"}
+```{r BoxplotArea, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BPArea}Logarithme des réclamations par région"}
 ggplot(VehClaimOnly, aes(x=AreaGraph, y=LogClaim)) + 
   geom_boxplot() +
   ylab("Logarithme des réclamations") +
+  xlab("") +
   coord_flip()
 ```
 
-Similairement, voici les réclamations dans les régions les plus récurrentes de la base de données. Sans surprise, les réclamations varient beaucoup même au sein d'une même région et il est difficile d'établir des constats en lesquels l'analyste avisé pourrait réellement avoir confiance. 
+Similairement, il est possible d'observer à la Figure \ref{fig:BPArea} les réclamations dans les régions les plus récurrentes de la base de données. Sans surprise, les réclamations varient beaucoup même au sein d'une même région et il est difficile d'établir des constats en lesquels l'analyste avisé pourrait réellement avoir confiance. 
 
 \clearpage
 
-## State
+## État
 
 ```{r ModifState, message=FALSE, echo = FALSE, warning = FALSE}
 StateGraph <- VehClaimOnly$State
@@ -271,14 +288,14 @@ lvl4[which(table(VehClaimOnly$State) < 2000)] <- "Other"
 levels(StateGraph) <- lvl4
 ```
 
-```{r BoxplotState, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotState}Logarithme des réclamations par état"}
+```{r BoxplotState, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BPState}Logarithme des réclamations par état"}
 ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) + 
   geom_boxplot() +
   ylab("Logarithme des réclamations") +
   coord_flip()
 ```
 
-Un constat similaire est de mise quant au lien entre la ville (ou région administrative selon le cas) et les réclamations. S'il est vrai qu'en moyenne les réclamations sont plus faibles dans la ville Rio de Janeiro qui a assurément la réputation d'accueillir une population moins aisée que Santa Catarina par exemple, il n'en demeure pas moins que cela varie énormément et des extrèmes sont observés dans toutes les villes du graphique et il est difficile, de prime abord, de ne pas attribuer les écarts au simple hasard. 
+Un constat similaire est de mise quant au lien entre la ville (ou région administrative selon le cas) et les réclamations, comme le présente la Figure \ref{fig:BPState}. S'il est vrai qu'en moyenne les réclamations sont plus faibles dans la ville Rio de Janeiro qui a assurément la réputation d'accueillir une population moins aisée que Santa Catarina par exemple, il n'en demeure pas moins que cela varie énormément et des extrèmes sont observés dans toutes les villes du graphique et il est difficile, de prime abord, de ne pas attribuer les écarts au simple hasard. 
 
 \clearpage
 
