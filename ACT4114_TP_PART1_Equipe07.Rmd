@@ -31,7 +31,16 @@ options(scipen=999)
 
 # Introduction
 
-Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations (tous types confondus). 
+Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisé est. #####. 
+##### Il faut faire la citation
+##### 
+#####
+Sa structure est très intuitive. En bref, chaque assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonne homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. En tout, chaque ligne comporte 23 variables, dont 5 variables décrivant les montants de réclamations, chacune étant associée à un type de dommage spécifique (par exemple une collision ou un vol de la voiture). Nous avons choisi de nous intéresser au montant total des réclamations pour un client et c'est donc la somme des 5 types de réclamations possibles qui sera notre variable réponse. Notre modèle utilisera les informations collectés par l'assureur pour établir une prédiction de l'ensemble des coûts de réclamations que le client engendrera pour une exposition unitaire. 
+####
+#### Définition de l'exposition
+####
+####
+
 
 \clearpage  
 
@@ -67,9 +76,9 @@ levels(Veh$VehManuf) <- lvl
 
 ## Nettoyage des données
 
-Les variables «State» et «StateAb» représentent la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seulement conserver la variable «State».
+Avant de lancer le développement de notre modèle, quelques ajustements sont recquis. Notamment, les variables «State» et «StateAb» représentent la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seulement conserver la variable «State».
 
-Une des observations a une année de véhicule de 0, ce qui est clairement impossible, donc on remplace le 0 par un **NA**.
+Également, une des observations a une année de véhicule de 0, ce qui est clairement impossible, donc on remplace le 0 par un **NA**.
 
 ```{r cleanup, message=FALSE, echo = FALSE}
 Veh <- Veh[-8]
@@ -88,7 +97,7 @@ VehClaimOnly$LogClaim <- log(VehClaimOnly$TotClaimExpUnit)
 
 ## Somme des réclamations
 
-La somme des réclamations est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0, soit `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. 
+La somme des réclamations associées à chaque assuré est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0, soit `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. 
 
 \begin{center}
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
@@ -100,17 +109,17 @@ La somme des réclamations est la variable réponse pour ce projet. Cette variab
 \end{tabular}
 \end{center}
 
-Puisqu'un montant de réclamation peut prendre des valeurs assez élevées, les graphiques peuvent devenir plutôt difficiles à lire. Pour remédier à ce problème, le logarithme du montant total des réclamations est utilisé dans les graphiques. Cela a cependant un coût : toutes les réclamations de 0 doivent être retirées du jeu de données. Des informations supplémentaires par rapport à ces réclamations seront ajoutées au long de l'analyse exploratoire pour pallier ce défaut.
+Puisqu'un montant de réclamation peut prendre des valeurs assez élevées, les graphiques peuvent devenir plutôt difficiles à lire. Pour remédier à ce problème, le logarithme naturel du montant total des réclamations est utilisé dans les graphiques. Cela a cependant un coût : toutes les réclamations de 0 doivent être retirées du jeu de données. Des informations supplémentaires par rapport à ces réclamations seront ajoutées au long de l'analyse exploratoire pour pallier ce défaut.
 
 
 ```{r HistClaim, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:HistRecl}Histogramme du logarithme des montants de réclamation"}
 ggplot(VehClaimOnly, aes(x=LogClaim))+
   geom_histogram() +
   xlab("Logarithme des réclamations") +
-  ylab("")
+  ylab("Nombre de réclamations")
 ```
 
-Comme on peut voir dans la Figure \ref{fig:HistRecl}, il
+Comme on peut voir dans la Figure \ref{fig:HistRecl}, la distribution est quelque peu asymétrique et la queue est très lourde. En effet, on observe une fréquence somme toute élevée de réclamations très importante. Il n'est pas rare que le logarithme naturel du montant de réclamations atteigne 10 et même plus, alors que la médiane est plutôt autour de 6.
 
 \clearpage
 
