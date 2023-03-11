@@ -367,31 +367,7 @@ Il y a seulement une observation avec une donnée manquante pour la variable «V
 Veh <- Veh[!is.na(Veh$VehYear),]
 ```
 
-Lorsque «VehModel» est manquante, «VehGroup» et «VehManuf» le sont également. Cela est tout à fait attendu, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable «VehManuf» est créée à partir de la variable «VehModel». On teste l'hypothèse que la variable «VehModel» est MCAR avec des tests du khi-carré de Pearson.
-
-```{r, message=FALSE}
-manq <- is.na(Veh$VehModel)
-chisq.test(Veh$Gender, manq, correct = F)
-chisq.test(Veh$DrivAge, manq, correct = F)
-chisq.test(Veh$State, manq, correct = F)
-chisq.test(Veh$VehYear, manq, correct = F)
-```
-Toutes les *p-values* approchent de 0, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. Les conclusions de ce test sont identiques pour les variables «VehGroup» et «VehManuf».
-
-```{r, message=FALSE, echo=FALSE, results='hide'}
-manq <- is.na(Veh$VehGroup)
-chisq.test(Veh$Gender, manq, correct = F)
-chisq.test(Veh$DrivAge, manq, correct = F)
-chisq.test(Veh$State, manq, correct = F)
-chisq.test(Veh$VehYear, manq, correct = F)
-```
-```{r, message=FALSE, echo=FALSE, results='hide'}
-manq <- is.na(Veh$VehManuf)
-chisq.test(Veh$Gender, manq, correct = F)
-chisq.test(Veh$DrivAge, manq, correct = F)
-chisq.test(Veh$State, manq, correct = F)
-chisq.test(Veh$VehYear, manq, correct = F)
-```
+Lorsque «VehModel» est manquante, «VehGroup» et «VehManuf» le sont également. Cela est tout à fait attendu, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable «VehManuf» est créée à partir de la variable «VehModel». On teste l'hypothèse que le patron de non-réponse de la variable «VehModel» est MCAR. Puisque la variable est catégorielle, le test de khi-carré de Pearson est utilisé. Les tests se retrouvent dans l'annexe. Les *p-values* de ces tests entre le patron de non-réponse de la variable «VehModel» et les variables «Gender», «DrivAge», «State» et «VehYear» se rapprochent de 0. On rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. En reproduisant ces tests pour les patrons de non-réponse des variables «VehGroup» et «VehManuf», la conclusion est identique.
 
 La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations. Faisons un diagramme boxplot pour voir s'il y a un lien entre la présence d'une observation manquante pour cette variable et le montant des réclamations.
 
@@ -402,27 +378,11 @@ ggplot(VehClaimOnly, aes(x = manq, y = log(ClaimAmount))) +
   ylab("Logarithme des réclamations") +
   xlab("Patron de non-réponse de «DrivAge»")
 ```
-Il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Il ne sera pas possible d'utiliser l'approche des cas complets, donc une méthode d'imputation stochastique sera privilégié. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
-```{r, message=FALSE}
-manq <- is.na(Veh$DrivAge)
-chisq.test(Veh$Gender, manq, correct = F)
-chisq.test(Veh$VehManuf, manq, correct = F)
-chisq.test(Veh$State, manq, correct = F)
-chisq.test(Veh$Area, manq, correct = F)
-chisq.test(Veh$ClaimAmount, manq, correct = F)
-```
+Vu le grand écart entre le logarithme des réclamations quand la variable «DrivAge» est absente versus quand elle est présente, il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Les *p-values* des tests entre le patron de non-réponse de «DrivAge» et les variables «Gender», «VehManuf», «State» et «Area» sont pratiquement nulles. L'approche des cas complets n'est pas appropriée quand le patron de non-réponse d'est pas MCAR, donc une méthode d'imputation stochastique sera privilégié. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
 
 
-La variable «Gender» est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, «DrivAge» l'est également. Cela devra être pris en considération s'il est nécessaire d'imputer les données manquantes. Testons l'hypothèse nulle que le patron de non-réponse de la variable «Gender» est MCAR.
-```{r, message=FALSE}
-manq <- is.na(Veh$Gender)
-chisq.test(Veh$DrivAge, manq, correct = F)
-chisq.test(Veh$VehManuf, manq, correct = F)
-chisq.test(Veh$State, manq, correct = F)
-chisq.test(Veh$Area, manq, correct = F)
-chisq.test(Veh$VehYear, manq, correct = F)
-```
-Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes de la variable «Gender» ne sont pas MCAR.  
+
+La variable «Gender» est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, «DrivAge» l'est également. Cela devra être pris en considération s'il est nécessaire d'imputer les données manquantes puisque l'ordre dans lequel les variables sont imputées a une incidence. Testons l'hypothèse nulle que le patron de non-réponse de la variable «Gender» est MCAR avec des tests du khi-carré de Pearson. Ces tests se retrouvent dans l'annexe. Les *p-values* des tests comparant le patron de non-réponse de la variable «Gender» aux variables «DrivAge», «VehManuf», «State» et «Area» sont tous très près de 0. Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes de la variable «Gender» ne sont pas MCAR.  
 
 
 Dans SumInsAvg remplacer les 0 par NA et traiter.
@@ -439,3 +399,57 @@ vehcomp <- complete(vehimp)
 \clearpage
 
 # Conclusion
+
+
+\clearpage
+
+# Annexe
+
+## Description du jeu de données
+
+## Tests du khi-carré de Pearson
+
+### Patron de non-réponse de la variable «VehModel»
+```{r, message=FALSE}
+manq <- is.na(Veh$VehModel)
+chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$VehYear, manq, correct = F)
+```
+
+### Patron de non-réponse de la variable «VehGroup»
+```{r, message=FALSE}
+manq <- is.na(Veh$VehGroup)
+chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$VehYear, manq, correct = F)
+```
+
+### Patron de non-réponse de la variable «VehManuf»
+```{r, message=FALSE}
+manq <- is.na(Veh$VehManuf)
+chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$VehYear, manq, correct = F)
+```
+
+### Patron de non-réponse de la variable «DrivAge»
+```{r, message=FALSE}
+manq <- is.na(Veh$DrivAge)
+chisq.test(Veh$Gender, manq, correct = F)
+chisq.test(Veh$VehManuf, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$Area, manq, correct = F)
+```
+
+### Patron de non-réponse de la variable «Gender»
+```{r, message=FALSE}
+manq <- is.na(Veh$Gender)
+chisq.test(Veh$DrivAge, manq, correct = F)
+chisq.test(Veh$VehManuf, manq, correct = F)
+chisq.test(Veh$State, manq, correct = F)
+chisq.test(Veh$Area, manq, correct = F)
+```
