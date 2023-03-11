@@ -1,9 +1,11 @@
 ---
 output:
+  html_document:
+    df_print: paged
   pdf_document:
     includes:
-      before_body: TP-title.tex
-      in_header: preamble-latex.tex
+      before_body: "TP-title.tex"
+      in_header: "preamble-latex.tex"
 ---  
 \centering  
 
@@ -442,9 +444,20 @@ Nous pouvons maintenant procéder à l'imputation des données:
 # BEAUCOUP TROP LONG À RUN
 #imp <- mice(temp_data, m = 1, method = "polyreg")
 #completedata <- complete(imp)
+<<<<<<< HEAD
 temp_data$Gender[is.na(temp_data$Gender)] <- sample(temp_data$Gender[!is.na(temp_data$Gender)], size = length(temp_data$Gender[is.na(temp_data$Gender)]), replace = T)
 temp_data$VehManuf[is.na(temp_data$VehManuf)] <- sample(temp_data$VehManuf[!is.na(temp_data$VehManuf)], size = length(temp_data$VehManuf[is.na(temp_data$VehManuf)]), replace = T)
 temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(temp_data$DrivAge)], size = length(temp_data$DrivAge[is.na(temp_data$DrivAge)]), replace = T)
+=======
+
+temp_data$Gender[is.na(temp_data$Gender)] <- sample(temp_data$Gender[!is.na(temp_data$Gender)], size = length(temp_data$Gender[is.na(temp_data$Gender)]), replace = T)
+
+temp_data$VehManuf[is.na(temp_data$VehManuf)] <- sample(temp_data$VehManuf[!is.na(temp_data$VehManuf)], size = length(temp_data$VehManuf[is.na(temp_data$VehManuf)]), replace = T)
+
+temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(temp_data$DrivAge)], size = length(temp_data$DrivAge[is.na(temp_data$DrivAge)]), replace = T)
+
+
+>>>>>>> c321a0f7888f9e9e86bc1497d1cde6d30f4b0dc5
 ```
 
 \clearpage
