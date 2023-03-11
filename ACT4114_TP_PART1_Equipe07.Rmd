@@ -411,7 +411,12 @@ Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes 
 Dans SumInsAvg remplacer les 0 par NA et traiter.
 
 ## Imputation des données manquantes
-
+```{r}
+Vehtest <- Veh[sample(nrow(Veh), 100), ]
+Vehtest <- Vehtest[-c(4, 5, 8, 25)]
+vehimp <- mice(Vehtest, m=1)
+vehcomp <- complete(vehimp)
+```
 
 
 \clearpage
