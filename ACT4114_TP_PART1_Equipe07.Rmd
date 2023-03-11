@@ -25,6 +25,8 @@ liste.paquetage <- c("ggplot2", "CASdatasets", "mice", "stringi")
 inst <- liste.paquetage %in% installed.packages()
 if(length(liste.paquetage[!inst]) > 0) install.packages(liste.paquetage[!inst])
 lapply(liste.paquetage, require, character.only = TRUE)
+
+options(scipen=999)
 ```
 
 # Introduction
@@ -33,16 +35,22 @@ Pour ce travail, l'objectif est de construire un modèle de prime pure pour la s
 
 \clearpage  
 
-# Création d'une nouvelle variable explicative
 
 ```{r donnees, include=FALSE, echo = FALSE}
 data(brvehins1a)
 Veh <- brvehins1a
+
 Veh$ClaimNb <- Veh$ClaimNbRob + Veh$ClaimNbPartColl + Veh$ClaimNbTotColl + Veh$ClaimNbFire + Veh$ClaimNbOther
-Veh$ClaimAmount <- (Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl + Veh$ClaimAmountFire + Veh$ClaimAmountOther)/Veh$ExposTotal
+
+Veh$ClaimAmount <- Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl + Veh$ClaimAmountFire + Veh$ClaimAmountOther
+Veh$ExposTotal[Veh$ExposTotal == 0] <- NA # Ajustement pour mettre exposition de 0 comme NA
+Veh$TotClaimExpUnit <- Veh$ClaimAmount/Veh$ExposTotal
+
 # Ajustement des niveaux
 levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 ```
+
+# Création d'une nouvelle variable explicative
 
 ```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
 Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel, regex="^([a-zA-Z]|[0-9]|[-]|[ ])* -"))
@@ -53,22 +61,30 @@ lvl[which(table(Veh$VehManuf) < 100)] <- "Other"
 levels(Veh$VehManuf) <- lvl
 ```
 
+\clearpage
+
 # Analyse Exploratoire
 
 ## Nettoyage des données
 
 Les variables «State» et «StateAb» représentent la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seulement conserver la variable «State».
 
+Une des observations a une année de véhicule de 0, ce qui est clairement impossible, donc on remplace le 0 par un **NA**.
+
 ```{r cleanup, message=FALSE, echo = FALSE}
-Veh <- Veh[Veh$VehYear > 1900 | is.na(Veh$VehYear),] #### THIS INTRODUCES A ROW OF NAs
-Veh <- Veh[-8] #retirer StateAb du jeu de données
+Veh <- Veh[-8]
+
+Veh$VehYear[Veh$VehYear < 1900 | is.na(Veh$VehYear)] <- NA
 ```
 
 ```{r data, message=FALSE, echo = FALSE}
 ## Création d'une nouvelle base de donnée pour l'analyse exploratoire
-VehClaimOnly <- Veh[Veh$ClaimAmount > 0 & Veh$ClaimAmount < 99999999999, ]
-VehClaimOnly$LogClaim <- log(VehClaimOnly$ClaimAmount)
+VehClaimOnly <- Veh[Veh$TotClaimExpUnit > 0, ]
+VehClaimOnly$LogClaim <- log(VehClaimOnly$TotClaimExpUnit)
 ```
+
+\clearpage
+
 
 ## Somme des réclamations
 
@@ -79,7 +95,7 @@ La somme des réclamations est la variable réponse pour ce projet. Cette variab
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
  \hline
- `r mean(na.omit(Veh$ClaimAmount))` & `r median(na.omit(Veh$ClaimAmount))` & `r sd(na.omit(Veh$ClaimAmount))` & `r min(na.omit(Veh$ClaimAmount))` & `r max(na.omit(Veh$ClaimAmount))` \\ 
+ `r round(mean(na.omit(Veh$ClaimAmount)), 1)` & `r round(median(na.omit(Veh$ClaimAmount)), 1)` & `r round(sd(na.omit(Veh$ClaimAmount)), 1)` & `r round(min(na.omit(Veh$ClaimAmount)), 1)` & `r round(max(na.omit(Veh$ClaimAmount)), 1)` \\ 
  \hline
 \end{tabular}
 \end{center}
@@ -89,7 +105,9 @@ Puisqu'un montant de réclamation peut prendre des valeurs assez élevées, les 
 
 ```{r HistClaim, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:HistRecl}Histogramme du logarithme des montants de réclamation"}
 ggplot(VehClaimOnly, aes(x=LogClaim))+
-  geom_histogram()
+  geom_histogram() +
+  xlab("Logarithme des réclamations") +
+  ylab("")
 ```
 
 Comme on peut voir dans la Figure \ref{fig:HistRecl}, il
@@ -98,12 +116,14 @@ Comme on peut voir dans la Figure \ref{fig:HistRecl}, il
 
 ## Exposition
 
+Le minimum est de 1/365, soit d'une journée.
+
 \begin{center}
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
  \hline
- `r mean(Veh$ExposTotal)` & `r median(Veh$ExposTotal)` & `r sd(Veh$ExposTotal)` & `r min(Veh$ExposTotal)` & `r max(Veh$ExposTotal)` \\ 
+ `r mean(na.omit(Veh$ExposTotal))` & `r median(na.omit(Veh$ExposTotal))` & `r sd(na.omit(Veh$ExposTotal))` & `r min(na.omit(Veh$ExposTotal))` & `r max(na.omit(Veh$ExposTotal))` \\ 
  \hline
 \end{tabular}
 \end{center}
@@ -142,23 +162,40 @@ Lorsqu'on regarde la quantité de ces personnes qui n'ont pas fait de réclamati
 \end{tabular}
 \end{center}
 
-En terme de sévérité, les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer un peu plus de réclamations extrêmes lorsque le genre est inconnu.
 
-
-```{r BoxplotGender, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotGender}Logarithme des réclamations par genre"}
+```{r BoxplotGender, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BPGen}Logarithme des réclamations par genre"}
 ggplot(VehClaimOnly, aes(x=Gender, y=LogClaim)) + 
   geom_boxplot() +
   ylab("Logarithme des réclamations")
 ```
 
+En terme de sévérité, les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer à la Figure \ref{fig:BPGen} des réclamations plus élevées en moyenne lorsque le genre est inconnu.
+
 \clearpage 
 
 ## Âge du conducteur
 
-```{r BoxplotAge, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BoxPlotDrivAge}Logarithme des réclamations par Âge de conducteur"}
+La variable de l'âge du conducteur n'est pas continue, mais plutôt divisée en 5 groupes. La fréquence de chaque niveau est illustrée ci-dessous :
+
+\begin{center}
+\begin{tabular}{ |c|c|c|c|c|c| } 
+ \hline
+  & 18-25 & 26-35 & 36-45 & 46-55 & >55 \\ 
+ \hline
+ Fréquence & `r sum(na.omit(Veh$DrivAge) == "18-25")` & `r sum(na.omit(Veh$DrivAge) == "26-35")` & `r sum(na.omit(Veh$DrivAge) == "36-45")` & `r sum(na.omit(Veh$DrivAge) == "46-55")` & `r sum(na.omit(Veh$DrivAge) == ">55")` \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+À la Figure \ref{fig:BPDrivAge}, il est possible d'observer que la tranche d'âge 26-35 ans a, en moyenne, les réclamations les plus élevées. Cela est plutôt intuitif car les jeunes conducteurs sont reconnus pour être plus téméraires et causer plus d'accidents. Une hypothèse vraisemblable pour expliquer que le groupe de conducteurs de 18 à 25 ans n'a pas des réclamations plus élevées est qu'ils n'ont tout simplement pas les moyens de se procurer des véhicules de grande valeur. 
+
+Encore une fois, lorsque l'information est manquante, les réclamations sont bien plus élevées en moyenne.
+
+```{r BoxplotAge, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BPDrivAge}Logarithme des réclamations par Âge de conducteur"}
 ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) + 
   geom_boxplot() +
-  ylab("Logarithme des réclamations")
+  ylab("Logarithme des réclamations") + 
+  xlab("Groupes d'âge")
 ```
 
 \clearpage 
