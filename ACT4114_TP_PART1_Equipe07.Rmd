@@ -404,7 +404,7 @@ data
 ```
 
 Nous constatons que le nombre de niveaux pour ces variables est très élevé, ce qui n'est pas optimal pour l'imputation des données. Nous examinons la différence entre ces trois variables pour une observation donnée:
-  ```{r}
+```{r}
 Veh[1:5,names(Veh) %in% c("VehModel", "VehGroup", "VehManuf")]
 ```
 En examinant les données, nous constatons que la variable VehManuf fournit une information beaucoup plus importante que les variables VehModel et VehGroup. En effet, la marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, tandis que la différence de risque entre différents modèles d'une même marque peut être relativement faible.
