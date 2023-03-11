@@ -236,7 +236,7 @@ Une autre variable explicative disponible est l'année du véhicule.
 \end{tabular}
 \end{center}
 
-Selon ce qu'on peut observer à la Figure \ref{fig:PointVY} avec à la régression, l'année du véhicule semble avoir une relation croissante avec le montant des réclamations.
+Selon ce qu'on peut observer à la Figure \ref{fig:PointVY} à l'aide de la régression, l'année du véhicule semble avoir une relation croissante avec le montant des réclamations. Le volume avant les années 90 semble trop faible pour se prononcer sur la tendance de cette époque.
 
 ```{r PointsAgeVeh, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointVY}Logarithme des réclamations en fonction de l'année du véhicule"}
 ggplot(VehClaimOnly, aes(x=VehYear, y=LogClaim)) + 
