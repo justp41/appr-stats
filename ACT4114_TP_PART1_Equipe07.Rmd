@@ -340,17 +340,17 @@ md.pattern(Veh[, colSums(is.na(Veh)) != 0], rotate.names = T)
 Dans la figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
 
 
-On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables et que lorsque ces variable sont absentes aucune autre variable l'est, nous les retirons du jeu de données.
+On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables, nous les retirons du jeu de données.
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
 ```
 
-Il y a seulement une observation avec une donnée manquante pour la variable «VehYear». En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons du jeu de données.
+Il y a seulement une observation avec une donnée manquante pour la variable «VehYear». En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons également du jeu de données.
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$VehYear),]
 ```
 
-Lorsque «VehModel» est manquante, «VehGroup» et «VehManuf» le sont également. Cela est tout à fait intuitif, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable «VehManuf» est créée à partir de la variable «VehModel». On test l'hypothèse que la variable «VehModel» est MCAR avec des tests du khi-carré de Pearson.
+Lorsque «VehModel» est manquante, «VehGroup» et «VehManuf» le sont également. Cela est tout à fait attendu, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable «VehManuf» est créée à partir de la variable «VehModel». On teste l'hypothèse que la variable «VehModel» est MCAR avec des tests du khi-carré de Pearson.
 
 ```{r, message=FALSE}
 manq <- is.na(Veh$VehModel)
@@ -359,7 +359,7 @@ chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$VehYear, manq, correct = F)
 ```
-Toutes les *p-values* approchent de 0, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. Les tests de Cette conclusion est identique pour les variables «VehGroup» et «VehManuf».
+Toutes les *p-values* approchent de 0, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. Les conclusions de ce test sont identiques pour les variables «VehGroup» et «VehManuf».
 
 ```{r, message=FALSE, echo=FALSE, results='hide'}
 manq <- is.na(Veh$VehGroup)
