@@ -31,7 +31,11 @@ options(scipen=999)
 
 # Introduction
 
-Pour ce travail, l'objectif est de construire un modèle de sévérité pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisée s'appelle *brvehins1a* et est basée sur une partie de l'*AUTOSEG*, un système de statistiques sur les automobiles assurés au Brésil. Sa structure est très intuitive. En bref, chaque combinaison véhicule-assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonne homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. En tout, chaque ligne comporte 23 variables, dont 5 variables décrivant les montants de réclamations, chacune étant associée à un type de dommage spécifique (par exemple une collision ou un vol de la voiture). Nous avons choisi de nous intéresser au montant total des réclamations pour un client et c'est donc la somme des 5 types de réclamations possibles qui sera notre variable réponse. Notre modèle utilisera les informations collectés par le système pour établir une prédiction de l'ensemble des coûts de réclamations que le client engendrera pour une exposition unitaire. Pour ces données, la documentation d'*AUTOSEG* semble indiquer que l'exposition est en véhicule par 6 mois. Nous pourrons donc l'utiliser pour caliber nos modèles et arriver avec la meilleure sévérité prédite possible. Ce type d'analyse pourrait avoir plusieurs utilités, notamment pour un modèle de prime pure si l'on décide d'incorporer la fréquence, ou des études de marchés.
+Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisée s'appelle *brvehins1a* et est basée sur une partie de l'*AUTOSEG*, un système de statistiques sur les automobiles assurés au Brésil. Sa structure est très intuitive. En bref, chaque combinaison véhicule-assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonne homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. 
+
+En tout, chaque ligne comporte 23 variables, dont 5 variables décrivant les montants de réclamations, chacune étant associée à un type de dommage spécifique (par exemple une collision ou un vol de la voiture). Nous avons choisi de nous intéresser au montant total des réclamations pour un client et c'est donc la somme des 5 types de réclamations possibles qui sera notre variable réponse. Notre modèle utilisera les informations collectés par le système pour établir une prédiction de l'ensemble des coûts de réclamations que le client engendrera pour une exposition unitaire. À cette fin, il y a 9 variables explicatives sur lesquelles concentrer nos efforts. En effet, les autres variables sont dépendantes ou encore collige l'information rétrospectivement par rapport aux montants de réclamations.
+
+Pour ces données, la documentation d'*AUTOSEG* indique que l'exposition se mesure en année et en véhicule. Une exposition unitaire correspond donc à un véhicule assuré pendant une année. Nous pourrons donc l'utiliser pour caliber nos modèles. Ce type d'analyse pourrait avoir plusieurs utilités, notamment pour implanter une tarification avantageuse ou encore pour faire des études de marchés.
 
 
 \clearpage  
@@ -47,10 +51,10 @@ levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 
 # Création d'une nouvelle variable explicative
 
-Pour l'analyse de sévérité, nous croyons que la variable sur le modèle de véhicule et le groupe de véhicule ont trop de niveau, ce qui nuit à leur puissance prédictive et interprétabilité. Nous avons donc opté pour un traitement utilisant les expressions régulières pour regrouper les véhicules par marque. Nous faisons l'hypothèse que la gamme de prix au sein d'une même marque reste relativement la même, ce qui pourrait permettre une meilleure interprétabilité.  
+Nous croyons que la variable sur le modèle de véhicule contient trop de niveaux, ce qui nuit à leur puissance prédictive et à leur interprétabilité. Nous avons donc choisi d'utiliser les expressions régulières pour regrouper les véhicules par marque. Nous faisons implicitement l'hypothèse que la gamme de prix au sein d'une même marque reste relativement la même. Cette simplification permet une meilleure interprétabilité. 
 
-Voici la procédure pour notre traitement:
-```{r ExprReg, message=FALSE, echo = TRUE, warning = FALSE}
+
+```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
 Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel
                                                , regex="^([a-zA-Z]|[0-9]|[-]|[ ])* -"))
 Veh$VehManuf[Veh$VehModel == "Outros"] <- "Other"
@@ -70,7 +74,9 @@ Avant de lancer le développement de notre modèle, quelques ajustements sont re
 
 Également, une des observations a une année de véhicule de 0, ce qui est clairement impossible, donc on remplace le 0 par un **NA**.
 
-Nous crééons aussi les variables qui nous donnent le nombre de sinistres totales ainsi que la sévérité total, tous type confondues. Le montant de sinistre exploré dans les graphiques est normalisé selon l'exposition.
+Nous créons aussi les variables représentant le nombre total de sinistres ainsi que le montant total de réclamations pour chaque assuré. Puisque l'information initiale est trop granulaire pour les besoins de cette analyse, nous consolidons les 5 variables de réclamations en une seule, nouvelle, qui constitue la somme des 5 variables préexistante.
+
+Les montants de sinistre présentés dans les graphiques sont normalisés pour une exposition unitaire.
 
 ```{r cleanup, message=FALSE, echo = TRUE}
 Veh <- Veh[-8]
@@ -86,7 +92,6 @@ Veh <- Veh[Veh$ExposTotal != 0, ] # Ajustement pour supprimer les expositions de
 Veh$TotClaimExpUnit <- Veh$ClaimAmount/Veh$ExposTotal
 ```
 
-Pour l'analyse exploratoire, puisque nous cherchons à faire une analyse sur la sévérité, il est raisonnable d'avoir une base de données avec seulement les observations qui admettent un montant de sinistre de plus de 0. Nous prenons aussi le log, une décision que sera discuté dans l'analyse exploratoire.
 
 ```{r data, message=FALSE, echo = TRUE}
 ## Création d'une nouvelle base de donnée pour les graphiques
@@ -148,7 +153,7 @@ ggplot(VehClaimOnly, aes(x=ExposTotal, y=LogClaim)) +
     theme_bw()
 ```
 
-On voit aisément dans la Figure \ref{fig:PointExpos} que la sévérité normalisé tend vers le centre plus la mesure d'exposition est élevée. C'est ce à quoi on peut s'attendre par le théorème centrale limite. La mesure d'exposition semble donc généralement satisfaisante pour l'analyse.
+On voit aisément dans la Figure \ref{fig:PointExpos} que le montant de réclamations normalisé tend vers le centre plus la mesure d'exposition est élevée. C'est ce à quoi on peut s'attendre par le théorème centrale limite. La mesure d'exposition semble donc satisfaisante pour l'analyse.
 
 
 \clearpage 
@@ -167,7 +172,7 @@ La variable **Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*.
 \end{tabular}
 \end{center}
 
-En analysant le lien avec les réclamations, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate*. Étant donné la très grande exposition qui y est associée, c'est évidemment absurde et on en déduit que l'assureur demande l'information sur le conducteur lorsqu'un accident survient et qu'une réclamation est nécessaire. Ainsi, il ajoute l'information rétrospectivement et il sera donc possiblement nécessaire de régrouper le genre *Corporate* avec les clients pour lesquels l'information sur le genre est inconnue. 
+En analysant le lien avec les réclamations, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate*. Étant donné la très grande exposition qui y est associée, c'est évidemment absurde et on en déduit que l'assureur demande l'information sur le conducteur lorsqu'un accident survient et qu'une réclamation est nécessaire. Ainsi, il ajoute l'information rétrospectivement. Pour faire des prédictions, il sera possiblement nécessaire de régrouper le genre *Corporate* avec les clients pour lesquels l'information sur le genre est inconnue. 
 
 \begin{center}
 \begin{tabular}{ |c|c|c|c|c| } 
@@ -188,7 +193,7 @@ ggplot(VehClaimOnly, aes(x=Gender, y=LogClaim)) +
     theme_bw()
 ```
 
-En terme de sévérité, les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer à la Figure \ref{fig:BPGen} des réclamations plus élevées en moyenne lorsque le genre est inconnu. Il faut admettre que c'est plutôt surprenant de prime abord. Il convient de noter que c'est l'échantillon le plus faible des trois catégories, mais avec plus de 10 000 réclamations, il est difficile de blâmer le hasard. Une analyse du patron de non-réponse inclaunt les autres variables s'impose.
+Les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer à la Figure \ref{fig:BPGen} des réclamations plus élevées en moyenne lorsque le genre est inconnu. Il faut admettre que c'est plutôt surprenant de prime abord. Il convient de noter que c'est l'échantillon le plus faible des trois catégories, mais avec plus de 10 000 réclamations, il est difficile de blâmer le hasard. Une analyse du patron de non-réponse inclaunt les autres variables s'impose.
 
 \clearpage 
 
@@ -281,7 +286,7 @@ lvl3[which(table(VehClaimOnly$Area) < 2000)] <- "Other"
 levels(AreaGraph) <- lvl3
 ```
 
-Pour l'analyse par région, nous avons regrouper les régions qui présentent moins de 2000 observations dans la catégorie *Other*.
+Pour l'analyse par région, nous avons regroupé les régions qui présentent moins de 2000 observations dans la catégorie *Other*.
 
 ```{r BoxplotArea, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BPArea}Logarithme des réclamations par région"}
 ggplot(VehClaimOnly, aes(x=AreaGraph, y=LogClaim)) + 
@@ -292,7 +297,7 @@ ggplot(VehClaimOnly, aes(x=AreaGraph, y=LogClaim)) +
   coord_flip()
 ```
 
-Similairement, il est possible d'observer à la Figure \ref{fig:BPArea} les réclamations dans les régions les plus récurrentes de la base de données. Sans surprise, les réclamations varient beaucoup même au sein d'une même région et il est difficile d'établir des constats en lesquels l'analyste avisé pourrait réellement avoir confiance. 
+Il est possible d'observer à la Figure \ref{fig:BPArea} les réclamations dans les régions les plus récurrentes de la base de données. Sans surprise, les réclamations varient beaucoup même au sein d'une même région et il est difficile d'établir des constats en lesquels l'analyste avisé pourrait réellement avoir confiance. 
 
 \clearpage
 
@@ -305,7 +310,7 @@ lvl4[which(table(VehClaimOnly$State) < 2000)] <- "Other"
 levels(StateGraph) <- lvl4
 ```
 
-Pour l'analyse par état, similairement à celle pour la région, nous avons regrouper les états qui présentent moins de 2000 observations dans la catégorie *Other*.
+Pour l'analyse par ville, tout comme celle pour la région, nous avons regroupé les états qui présentent moins de 2000 observations dans la catégorie *Other*.
 
 ```{r BoxplotState, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:BPState}Logarithme des réclamations par état"}
 ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) + 
@@ -316,7 +321,7 @@ ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) +
     theme_bw()
 ```
 
-Un constat similaire est de mise quant au lien entre la ville (ou région administrative selon le cas) et les réclamations, comme le présente la Figure \ref{fig:BPState}. S'il est vrai qu'en moyenne les réclamations sont plus faibles dans la ville Rio de Janeiro qui a assurément la réputation d'accueillir une population moins aisée que Santa Catarina par exemple, il n'en demeure pas moins que cela varie énormément et des extrèmes sont observés dans toutes les villes du graphique et il est difficile, de prime abord, de ne pas attribuer les écarts au simple hasard. 
+Un constat similaire est de mise quant au lien entre la ville (ou région administrative selon le cas) et les réclamations, comme le présente la Figure \ref{fig:BPState}. S'il est vrai qu'en moyenne les réclamations sont plus faibles dans la ville Rio de Janeiro qui a assurément la réputation d'accueillir une population moins aisée que Santa Catarina par exemple, il n'en demeure pas moins que cela varie énormément. Des extrèmes sont observés dans toutes les villes du graphique et il est difficile, de prime abord, de ne pas attribuer les écarts au simple hasard. 
 
 \clearpage
 
@@ -333,7 +338,7 @@ ggplot(VehClaimOnly, aes(x=log(PremTotal)))+
     ylab("Nombre d'occurences")
 ```
 
-Tout d'abord, l'histogramme de la Figure \ref{fig:PointPremHist} révèle que la distribution des primes totales présente une asymétrie négative, avec un nombre plus important de primes de faible montant par rapport à celles de montant élevé.
+Tout d'abord, l'histogramme de la Figure \ref{fig:PointPremHist} révèle que la distribution des primes totales présente une asymétrie négative, avec un nombre plus important de primes de faible montant par rapport à celles de montant élevé. 
 
 ```{r PointsPrime, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPrem}Logarithme des réclamations en fonction de la prime totale"}
 ggplot(VehClaimOnly, aes(x=log(PremTotal/ExposTotal), y=LogClaim)) + 
@@ -343,15 +348,15 @@ ggplot(VehClaimOnly, aes(x=log(PremTotal/ExposTotal), y=LogClaim)) +
     geom_smooth()+
     theme_bw()
 ```
-On voit dans la Figure \ref{fig:PointPrem} qu'il y a une énorme corrélation entre la prime et les réclamations. C'est un constat auquel on peut s'attendre considérant que le but de la prime est de couvrir pour les réclamations.  
+On voit dans la Figure \ref{fig:PointPrem} qu'il y a une énorme corrélation entre le montant de prime par exposition et le montant des réclamations. C'est un constat auquel on peut s'attendre considérant que le but de la prime est de couvrir les réclamations.  
 
-La prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle. Effectivement, il va sans dire que le but de notre projet est de développer notre propre modèle de calcul de la sévérité. Il est important de garder à l'esprit que la prime est assurément calculée à partir des variables présentées plus haut, en soi, elle n'apporte donc aucune nouvelle information puisqu'elle est elle même une combiaison de toutes les autres variables. Ainsi, il serait contre-productif de tenter de réutiliser la prime dans notre modèle.  On remarque que les primes plus basses sont associées à une plus grande variance dans les montants de réclamations. Cela correspond bien aux attentes, un modèle typique devrait être plus performant pour prédire les réclamations des gros risques, c'est à dire, ceux qui ont une grande mesure d'exposition et des dimensions risquées.
+La prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle. Effectivement, il va sans dire que le but de notre projet est de développer notre propre modèle de calcul de la prime. Il est important de garder à l'esprit que la prime est assurément calculée à partir des variables présentées plus haut, en soi, elle n'apporte donc aucune nouvelle information puisqu'elle est elle même une combinaison de toutes les autres variables. Ainsi, il serait contre-productif de tenter de réutiliser la prime dans notre modèle.  On remarque que les primes plus basses sont associées à une plus grande variance dans les montants de réclamations. Cela correspond bien aux attentes, un modèle typique devrait être plus performant pour prédire les réclamations des gros risques, c'est à dire, ceux qui ont une grande mesure d'exposition et des dimensions risquées.
 
 \clearpage
 
 ## SumInsAvg
 
-Selon la documentation d'*AUTOSEG*, cette variable correspond à la moyenne pondéré par exposition du montant de réclamation. Nous émettons l'hypothèse que cette variable représente la limite supérieure des réclamations possibles. Cette hypothèse est importante car elle pourrait guider notre manière de construire le modèle pour la sévérité. On peut explorer cette hypothèse avec le graphique suivant:
+Selon la documentation d'*AUTOSEG*, cette variable correspond à la moyenne pondéré par exposition du montant de réclamation. Nous émettons l'hypothèse que cette variable représente la limite supérieure des réclamations possibles. Cette hypothèse est importante car elle pourrait guider notre manière de construire le modèle. On peut explorer cette hypothèse avec le graphique suivant:
 
 ```{r PreuveIns, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
 library(gridExtra)
@@ -364,9 +369,9 @@ ggplot(VehClaimOnly,aes(x=LogClaim, y=log(SumInsAvg/ExposTotal) , col = LogClaim
     guides(color=FALSE)
 ```
 
-On voit donc dans la figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré est supérieure au montant réclamé. On peut croire que les points sous la courbe représente des observations où le montant à assuré a diminué au cours de la période assuré. En effet, Si le montant assuré a été plus élevé à un moment et a diminué subitement, il est possible que la sévérité normalisée dépasse le montant assuré normalisée. Nous croyons donc que notre hypothèse est raisonnable.
+On voit donc dans la figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré est supérieur au montant réclamé. On peut croire que les points sous la courbe représente des observations où le montant assuré a diminué (au renouvellement par exemple). En effet, si le montant assuré a été plus élevé par le passé et a diminué subitement, suite à un changement de véhicule par exemple, il est possible que les réclamations normalisées dépassent le montant assuré normalisée. Nous croyons donc que notre hypothèse est raisonnable et nous considérons avoir bien compris le sens de cette variable.
 
-La figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corrélation entre le montant assuré et le montant de réclamation. Elle aura donc un grand impact sur le modèle quant à sa conception et nos règles de décisions pour le domaine des prédictions.
+La figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corrélation entre le montant assuré et le montant de réclamation. Elle aura donc un grand impact sur le modèle quant à sa conception et à nos règles de décisions pour le domaine des prédictions.
 
 
 \clearpage
@@ -382,19 +387,19 @@ md.pattern(Veh[, colSums(is.na(Veh)) != 0], rotate.names = T)
 Dans la figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
 
 
-On remarque que lorsque la variable «Area» est inconnue, la variable «State» l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables, nous les retirons du jeu de données.
+On remarque que lorsque la variable *Area* est inconnue, la variable *State* l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables, nous les retirons du jeu de données.
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
 ```
 
-Il y a seulement une observation avec une donnée manquante pour la variable «VehYear». En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons également du jeu de données.
+Il y a seulement une observation avec une donnée manquante pour la variable *VehYear*. En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons également du jeu de données.
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$VehYear),]
 ```
 
-Lorsque «VehModel» est manquante, «VehGroup» et «VehManuf» le sont également. Cela est tout à fait attendu, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable «VehManuf» est créée à partir de la variable «VehModel». On teste l'hypothèse que le patron de non-réponse de la variable «VehModel» est MCAR. Puisque la variable est catégorielle, le test de khi-carré de Pearson est utilisé. Les tests se retrouvent dans l'annexe. Les *p-values* de ces tests entre le patron de non-réponse de la variable «VehModel» et les variables «Gender», «DrivAge», «State» et «VehYear» se rapprochent de 0. On rejette l'hypothèse nulle. Le patron de non-réponse de la variable «VehModel» n'est pas MCAR. En reproduisant ces tests pour les patrons de non-réponse des variables «VehGroup» et «VehManuf», la conclusion est identique.
+Lorsque *VehModel* est manquante, *VehGroup* et *VehManuf* le sont également. Cela est tout à fait attendu, car il n'est pas possible de classifier un véhicule si son modèle n'est pas connu et la variable *VehManuf* est créée à partir de la variable *VehModel*. On teste l'hypothèse que le patron de non-réponse de la variable *VehModel* est MCAR. Puisque la variable est catégorielle, le test de khi-carré de Pearson est utilisé. Les tests se retrouvent dans l'annexe. Les *p-values* de ces tests entre le patron de non-réponse de la variable *VehModel* et les variables *Gender*, *DrivAge*, *State* et *VehYear* se rapprochent de 0. En conséquence, on rejette l'hypothèse nulle. Le patron de non-réponse de la variable *VehModel* n'est selon toute vraisemblance pas MCAR. En reproduisant ces tests pour les patrons de non-réponse des variables *VehGroup* et *VehManuf*, la conclusion est malheureusement identique.
 
-La variable «DrivAge» est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations. Faisons un diagramme boxplot pour voir s'il y a un lien entre la présence d'une observation manquante pour cette variable et le montant des réclamations.
+La variable *DrivAge* est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations. Faisons un diagramme boxplot pour voir s'il y a un lien entre la présence d'une observation manquante pour cette variable et le montant des réclamations.
 
 ```{r, DrivAgelinkwithClaims, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:DrivAgelinkwithClaims}Lien entre le patron de non-réponse de la variable «DrivAge» et le logarithme des réclamations"}
 manq <- is.na(VehClaimOnly$DrivAge)
@@ -403,34 +408,34 @@ ggplot(VehClaimOnly, aes(x = manq, y = log(ClaimAmount))) +
   ylab("Logarithme des réclamations") +
   xlab("Patron de non-réponse de «DrivAge»")
 ```
-Vu le grand écart entre le logarithme des réclamations quand la variable «DrivAge» est absente versus quand elle est présente, il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Les *p-values* des tests entre le patron de non-réponse de «DrivAge» et les variables «Gender», «VehManuf», «State» et «Area» sont pratiquement nulles. L'approche des cas complets n'est pas appropriée quand le patron de non-réponse d'est pas MCAR, donc une méthode d'imputation stochastique sera privilégié. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
+Vu le grand écart entre le logarithme des réclamations quand la variable *DrivAge* est absente versus quand elle est présente, il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Les *p-values* des tests entre le patron de non-réponse de *DrivAge* et les variables *Gender*, *VehManuf*, *State* et *Area* sont pratiquement nulles. L'approche des cas complets n'est pas appropriée quand le patron de non-réponse n'est pas MCAR, donc une méthode d'imputation stochastique sera privilégiée. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
 
 
 
-La variable «Gender» est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, «DrivAge» l'est également. Cela devra être pris en considération s'il est nécessaire d'imputer les données manquantes puisque l'ordre dans lequel les variables sont imputées a une incidence. Testons l'hypothèse nulle que le patron de non-réponse de la variable «Gender» est MCAR avec des tests du khi-carré de Pearson. Ces tests se retrouvent dans l'annexe. Les *p-values* des tests comparant le patron de non-réponse de la variable «Gender» aux variables «DrivAge», «VehManuf», «State» et «Area» sont tous très près de 0. Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes de la variable «Gender» ne sont pas MCAR.  
+La variable *Gender* est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, *DrivAge* l'est également. Cela devra être pris en considération s'il est nécessaire d'imputer les données manquantes puisque l'ordre dans lequel les variables sont imputées a une incidence. Testons l'hypothèse nulle que le patron de non-réponse de la variable *Gender* est MCAR avec des tests du khi-carré de Pearson. Ces tests se retrouvent dans l'annexe. Les *p-values* des tests comparant le patron de non-réponse de la variable *Gender* aux variables *DrivAge*, *VehManuf*, *State* et *Area* sont tous très près de 0. Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes de la variable *Gender* ne sont pas MCAR.  
 
 
-Dans SumInsAvg remplacer les 0 par NA et traiter.
+
 
 ## Imputation des données manquantes
 
-Dans cette section, nous procédons à l'imputation des données manquantes dans notre jeu de données. Nous commençons par examiner le motif des données manquantes en utilisant la fonction md.pattern() sur le jeu de données Veh.
+Dans cette section, nous procédons à l'imputation des données manquantes dans notre jeu de données. Nous commençons par examiner le motif des données manquantes en utilisant la fonction md.pattern() sur le jeu de données *Veh*.
 ```{r}
 md.pattern(Veh, rotate.names = T)
 ```
 
-Nous pouvons voir que l'orsque le modèle du véhicule est manquant pour une observation, le groupe et le manufacturier de cette même observation sont aussi manquants. Nous examinons les variables VehModel et VehGroup pour déterminer si elles fournissent une information utile pour notre analyse. Nous créons un data.frame contenant le nombre de niveaux pour chaque variable afin de mieux les comprendre.
+Nous pouvons voir que lorsque le modèle du véhicule est manquant pour une observation, le groupe et le manufacturier de cette même observation sont aussi manquants. Nous examinons les variables *VehModel* et *VehGroup* pour déterminer si elles fournissent une information utile pour notre analyse. 
 ```{r}
 data <- data.frame("Niveaux" = c(length(levels(Veh$VehModel)), length(levels(Veh$VehGroup))))
 rownames(data) <- c("VehModel", "VehGroup")
 data
 ```
 
-Nous constatons que le nombre de niveaux pour ces variables est très élevé, ce qui n'est pas optimal pour l'imputation des données. Nous examinons la différence entre ces trois variables pour une observation donnée:
+En examinant en détails ces variables, nous constatons que le nombre de niveaux de chacune est très élevé, ce qui n'est pas optimal pour l'imputation des données. 
 ```{r}
 Veh[1:5,names(Veh) %in% c("VehModel", "VehGroup", "VehManuf")]
 ```
-En examinant les données, nous constatons que la variable VehManuf fournit une information beaucoup plus importante que les variables VehModel et VehGroup. En effet, la marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, tandis que la différence de risque entre différents modèles d'une même marque peut être relativement faible.
+De même, nous constatons que la variable *VehManuf* fournit une information beaucoup plus importante que les variables *VehModel* et *VehGroup*. En effet, la marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, tandis que la différence de risque entre différents modèles d'une même marque peut être relativement faible.
 
 Par conséquent, nous avons décidé de retirer les variables VehModel et VehGroup du jeu de données, ce qui simplifie non seulement l'imputation des données manquantes, mais aussi l'analyse des données. En outre, cela permet de réduire la dimensionnalité du jeu de données et peut conduire à des modèles plus simples et plus faciles à interpréter.
 ```{r}
@@ -462,12 +467,33 @@ Nous pouvons maintenant procéder à l'imputation des données:
 
 # Conclusion
 
+En guise de conclusion, il importe de garde en tête que l'analyse suivante a pour but ultime de créer un modèle de prime pure pouvant être utilisé à des fins de tarification par des assureurs en amérique du Sud. Malheureusement, toutes les variables explicatrices n'ont pas été colligées exhaustivement dans le jeu de données et il a donc été nécessaire d'imputer stochastiquement les valeurs d'une proportion non négligeable de nos assurés pour les variables *Gender*, *DrivAge* et *VehManuf*. Il aurait clairement été préférable de travailler avec la bonne information directement, mais dans les circonstances, il s'agit de la meilleure avenue possible pour maintenir un niveau de variance acceptable et éviter d'introduire de biais dans nos résultats. 
+Pour les prochaines étapes de cette analyse, puisque nous souhaitons modéliser la prime pure, une distribution tweedie pourrait s'avérer particulièrement appropriée, car beaucoup d'assurés n'ont pas effectué de réclamations. Effectivement, cette distribution est connue pour ses capacités à bien modéliser à la fois une proportion significative de réclamations inexistantes (donc lorsque la variable endogène est 0) et des seuils élevés. De plus, cela permet de ne pas développer deux modèles distincts pour la fréquence et la sévérité. 
 
 \clearpage
 
 # Annexe
 
 ## Description du jeu de données
+
+Nom du jeu de données: brvehins1a
+
+Source: CASdatasets - https://www2.susep.gov.br/menuestatistica/Autoseg/principal.aspx
+
+Brève description: Le jeu de données contient des informations sur tous les véhicules assurés par des compagnies d'assurances privées au Brésil. Il contient des informations sur le risque du véhicule et les transactions financières le concernant.
+
+Variable réponse: La somme des montants réclamés, tout type confondus. La variable est quantitative.
+
+Mesure d'exposition: Temps pour lequel le risque a été assuré.
+
+Variables explicatives: Il y en a 9 si on ne considère pas les primes et l'exposition. En voici 5:
+
+Sexe, qualitative
+Âge du conducteur, ordinale
+Montant assuré, quantitative
+Modèle du véhicule, qualitative
+Endroit géographique, qualitative
+Taille du jeu de données: 393071 observation et 23 variables.
 
 ## Tests du khi-carré de Pearson
 
