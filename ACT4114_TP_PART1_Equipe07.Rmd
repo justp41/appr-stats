@@ -33,9 +33,9 @@ options(scipen=999)
 
 Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisée s'appelle *brvehins1a* et est basée sur une partie de l'*AUTOSEG*, un système de statistiques sur les automobiles assurés au Brésil. Sa structure est très intuitive. En bref, chaque combinaison véhicule-assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonne homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. 
 
-En tout, chaque ligne comporte 23 variables, dont 5 variables décrivant les montants de réclamations, chacune étant associée à un type de dommage spécifique (par exemple une collision ou un vol de la voiture). Nous avons choisi de nous intéresser au montant total des réclamations pour un client et c'est donc la somme des 5 types de réclamations possibles qui sera notre variable réponse. Notre modèle utilisera les informations collectés par le système pour établir une prédiction de l'ensemble des coûts de réclamations que le client engendrera pour une exposition unitaire. À cette fin, il y a 9 variables explicatives sur lesquelles concentrer nos efforts. En effet, les autres variables sont dépendantes ou encore collige l'information rétrospectivement par rapport aux montants de réclamations.
+En tout, chaque ligne comporte 23 variables, dont 5 variables décrivant les montants de réclamations, chacune étant associée à un type de dommage spécifique (par exemple une collision ou un vol de la voiture). Nous avons choisi de nous intéresser au montant total des réclamations. Nos variables réponses feront abstractions du type de dommage, nous allons donc prendre la somme sur chaque type. Pour arriver à notre modèle de prime pure, il y a 9 variables explicatives sur lesquelles concentrer nos efforts. En effet, les autres variables sont dépendantes ou encore collige l'information rétrospectivement par rapport aux montants de réclamations.
 
-Pour ces données, la documentation d'*AUTOSEG* indique que l'exposition se mesure en année et en véhicule. Une exposition unitaire correspond donc à un véhicule assuré pendant une année. Nous pourrons donc l'utiliser pour caliber nos modèles. Ce type d'analyse pourrait avoir plusieurs utilités, notamment pour implanter une tarification avantageuse ou encore pour faire des études de marchés.
+Pour ces données, la documentation d'*AUTOSEG* indique que l'exposition se mesure en année-véhicule. Une exposition unitaire correspond donc à un véhicule assuré pendant une année. Nous pourrons donc l'utiliser pour caliber nos modèles. Ce type d'analyse pourrait avoir plusieurs utilités, notamment pour implanter une tarification avantageuse ou encore pour faire des études de marchés.
 
 
 \clearpage  
@@ -70,7 +70,7 @@ levels(Veh$VehManuf) <- lvl
 
 ## Nettoyage des données
 
-Avant de lancer le développement de notre modèle, quelques ajustements sont recquis. Notamment, les variables «State» et «StateAb» représentent la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seulement conserver la variable «State».
+Avant de lancer le développement de notre modèle, quelques ajustements sont requis. Notamment, les variables «State» et «StateAb» représentent la même information, l'une étant simplement l'abbréviation de l'autre. Nous allons seulement conserver la variable «State».
 
 Également, une des observations a une année de véhicule de 0, ce qui est clairement impossible, donc on remplace le 0 par un **NA**.
 
@@ -78,7 +78,7 @@ Nous créons aussi les variables représentant le nombre total de sinistres ains
 
 Les montants de sinistre présentés dans les graphiques sont normalisés pour une exposition unitaire.
 
-```{r cleanup, message=FALSE, echo = TRUE}
+```{r cleanup, message=FALSE, echo = FALSE}
 Veh <- Veh[-8]
 
 Veh$VehYear[Veh$VehYear < 1900 | is.na(Veh$VehYear)] <- NA
@@ -93,7 +93,7 @@ Veh$TotClaimExpUnit <- Veh$ClaimAmount/Veh$ExposTotal
 ```
 
 
-```{r data, message=FALSE, echo = TRUE}
+```{r data, message=FALSE, echo = FALSE}
 ## Création d'une nouvelle base de donnée pour les graphiques
 VehClaimOnly <- Veh[Veh$ClaimAmount > 0, ]
 VehClaimOnly$LogClaim <- log(VehClaimOnly$TotClaimExpUnit)
@@ -338,7 +338,9 @@ ggplot(VehClaimOnly, aes(x=log(PremTotal)))+
     ylab("Nombre d'occurences")
 ```
 
-Tout d'abord, l'histogramme de la Figure \ref{fig:PointPremHist} révèle que la distribution des primes totales présente une asymétrie négative, avec un nombre plus important de primes de faible montant par rapport à celles de montant élevé. 
+Tout d'abord, l'histogramme de la Figure \ref{fig:PointPremHist} révèle que la distribution des primes totales présente une asymétrie négative, avec un nombre plus important de primes de faible montant par rapport à celles de montant élevé.
+
+\clearpage
 
 ```{r PointsPrime, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointPrem}Logarithme des réclamations en fonction de la prime totale"}
 ggplot(VehClaimOnly, aes(x=log(PremTotal/ExposTotal), y=LogClaim)) + 
@@ -346,11 +348,14 @@ ggplot(VehClaimOnly, aes(x=log(PremTotal/ExposTotal), y=LogClaim)) +
   ylab("Logarithme des réclamations")+
     xlab("Logarithme des primes totales")+
     geom_smooth()+
-    theme_bw()
+    theme_bw()+
+    xlim(5,10)+
+    ylim(0,15)
 ```
+
 On voit dans la Figure \ref{fig:PointPrem} qu'il y a une énorme corrélation entre le montant de prime par exposition et le montant des réclamations. C'est un constat auquel on peut s'attendre considérant que le but de la prime est de couvrir les réclamations.  
 
-La prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle. Effectivement, il va sans dire que le but de notre projet est de développer notre propre modèle de calcul de la prime. Il est important de garder à l'esprit que la prime est assurément calculée à partir des variables présentées plus haut, en soi, elle n'apporte donc aucune nouvelle information puisqu'elle est elle même une combinaison de toutes les autres variables. Ainsi, il serait contre-productif de tenter de réutiliser la prime dans notre modèle.  On remarque que les primes plus basses sont associées à une plus grande variance dans les montants de réclamations. Cela correspond bien aux attentes, un modèle typique devrait être plus performant pour prédire les réclamations des gros risques, c'est à dire, ceux qui ont une grande mesure d'exposition et des dimensions risquées.
+La prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle. Effectivement, il va sans dire que le but de notre projet est de développer notre propre modèle de calcul de la prime. Il est important de garder à l'esprit que la prime est assurément calculée à partir des variables présentées plus haut, en soi, elle n'apporte donc aucune nouvelle information puisqu'elle est elle même une combinaison de toutes les autres variables. Ainsi, il serait contre-productif de tenter de réutiliser la prime dans notre modèle.
 
 \clearpage
 
@@ -384,6 +389,7 @@ Visualisons les données manquantes.
 ```{r MissingDataVis, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
 md.pattern(Veh[, colSums(is.na(Veh)) != 0], rotate.names = T)
 ```
+
 Dans la figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
 
 
@@ -467,7 +473,7 @@ Nous pouvons maintenant procéder à l'imputation des données:
 
 # Conclusion
 
-En guise de conclusion, il importe de garde en tête que l'analyse suivante a pour but ultime de créer un modèle de prime pure pouvant être utilisé à des fins de tarification par des assureurs en amérique du Sud. Malheureusement, toutes les variables explicatrices n'ont pas été colligées exhaustivement dans le jeu de données et il a donc été nécessaire d'imputer stochastiquement les valeurs d'une proportion non négligeable de nos assurés pour les variables *Gender*, *DrivAge* et *VehManuf*. Il aurait clairement été préférable de travailler avec la bonne information directement, mais dans les circonstances, il s'agit de la meilleure avenue possible pour maintenir un niveau de variance acceptable et éviter d'introduire de biais dans nos résultats. 
+En guise de conclusion, il importe de garder en tête que l'analyse suivante a pour but ultime de créer un modèle de prime pure pouvant être utilisé à des fins de tarification par des assureurs en amérique du Sud. Malheureusement, toutes les variables explicatrices n'ont pas été colligées exhaustivement dans le jeu de données et il a donc été nécessaire d'imputer stochastiquement les valeurs d'une proportion non négligeable de nos assurés pour les variables *Gender*, *DrivAge* et *VehManuf*. Il aurait clairement été préférable de travailler avec la bonne information directement, mais dans les circonstances, il s'agit de la meilleure avenue possible pour maintenir un niveau de variance acceptable et éviter d'introduire de biais dans nos résultats. 
 Pour les prochaines étapes de cette analyse, puisque nous souhaitons modéliser la prime pure, une distribution tweedie pourrait s'avérer particulièrement appropriée, car beaucoup d'assurés n'ont pas effectué de réclamations. Effectivement, cette distribution est connue pour ses capacités à bien modéliser à la fois une proportion significative de réclamations inexistantes (donc lorsque la variable endogène est 0) et des seuils élevés. De plus, cela permet de ne pas développer deux modèles distincts pour la fréquence et la sévérité. 
 
 \clearpage
