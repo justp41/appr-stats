@@ -25,7 +25,6 @@ liste.paquetage <- c("ggplot2", "CASdatasets", "mice", "stringi", "ggmice")
 inst <- liste.paquetage %in% installed.packages()
 if(length(liste.paquetage[!inst]) > 0) install.packages(liste.paquetage[!inst])
 lapply(liste.paquetage, require, character.only = TRUE)
-
 options(scipen=999)
 ```
 
@@ -44,7 +43,6 @@ Pour ces données, la documentation d'*AUTOSEG* indique que l'exposition se mesu
 ```{r donnees, include=FALSE, echo = FALSE}
 data(brvehins1a)
 Veh <- brvehins1a
-
 # Ajustement des niveaux
 levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 ```
@@ -80,12 +78,9 @@ Les montants de sinistre présentés dans les graphiques sont normalisés pour u
 
 ```{r cleanup, message=FALSE, echo = FALSE}
 Veh <- Veh[-8]
-
 Veh$VehYear[Veh$VehYear < 1900 | is.na(Veh$VehYear)] <- NA
-
 Veh$ClaimNb <- Veh$ClaimNbRob + Veh$ClaimNbPartColl + Veh$ClaimNbTotColl + 
     Veh$ClaimNbFire + Veh$ClaimNbOther
-
 Veh$ClaimAmount <- Veh$ClaimAmountRob + Veh$ClaimAmountPartColl + Veh$ClaimAmountTotColl +
     Veh$ClaimAmountFire + Veh$ClaimAmountOther
 Veh <- Veh[Veh$ExposTotal != 0, ] # Ajustement pour supprimer les expositions de 0
@@ -106,7 +101,9 @@ VehClaimOnly$LogClaim <- log(VehClaimOnly$TotClaimExpUnit)
 
 La somme des réclamations associées à chaque assuré est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0, soit `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. 
 
+
 \begin{center}
+Table 1 : Statistiques sommaires du logarithme des réclamations
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
@@ -136,6 +133,7 @@ Comme on peut voir dans la Figure \ref{fig:HistRecl}, la distribution est quelqu
 Le minimum est de 1/365, soit d'une journée. Il semble y avoir beaucoup d'annulations de même que des clients particulièrement fidèles puisque la médiane d'exposition est de moins d'un an tandis que la moyenne est de plus de 3 ans.
 
 \begin{center}
+Table 2 : Statistiques sommaires de l'exposition
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
@@ -163,6 +161,7 @@ On voit aisément dans la Figure \ref{fig:PointExpos} que le montant de réclama
 La variable **Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*.
 
 \begin{center}
+Table 3 : Fréquences associées à la variable *Genre*
 \begin{tabular}{ |c|c|c|c|c| } 
  \hline
   & Male & Female & Corporate & NA \\ 
@@ -175,6 +174,7 @@ La variable **Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*.
 En analysant le lien avec les réclamations, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate*. Étant donné la très grande exposition qui y est associée, c'est évidemment absurde et on en déduit que l'assureur demande l'information sur le conducteur lorsqu'un accident survient et qu'une réclamation est nécessaire. Ainsi, il ajoute l'information rétrospectivement. Pour faire des prédictions, il sera possiblement nécessaire de régrouper le genre *Corporate* avec les clients pour lesquels l'information sur le genre est inconnue. 
 
 \begin{center}
+Table 4 : Fréquences de non-réclamation pour la variable *Genre*
 \begin{tabular}{ |c|c|c|c|c| } 
  \hline
   & Male & Female & Corporate & NA \\ 
@@ -202,6 +202,7 @@ Les moyennes des réclamations ne semblent pas changer d'un genre à un autre, m
 La variable de l'âge du conducteur n'est pas continue, mais plutôt divisée en 5 groupes. La fréquence de chaque niveau est illustrée ci-dessous :
 
 \begin{center}
+Table 5 : Fréquences associées à la variable *Âge du conducteur*
 \begin{tabular}{ |c|c|c|c|c|c| } 
  \hline
   & 18-25 & 26-35 & 36-45 & 46-55 & >55 \\ 
@@ -230,6 +231,7 @@ ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) +
 Une autre variable explicative disponible est l'année du véhicule. 
 
 \begin{center}
+Table 6 : Statistiques sommaires de l'année du véhicule
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
@@ -470,14 +472,9 @@ Il n'est pas possible d'utiliser les cas complets pour analyser les données man
 #temp_data$VehManuf[is.na(temp_data$VehManuf)] <- sample(temp_data$VehManuf[!is.na(temp_data$VehManuf)], size = #length(temp_data$VehManuf[is.na(temp_data$VehManuf)]), replace = T)
 #temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(temp_data$DrivAge)], size = #length(temp_data$DrivAge[is.na(temp_data$DrivAge)]), replace = T)
 #=======
-
 temp_data$Gender[is.na(temp_data$Gender)] <- sample(temp_data$Gender[!is.na(temp_data$Gender)], size = length(temp_data$Gender[is.na(temp_data$Gender)]), replace = T)
-
 temp_data$VehManuf[is.na(temp_data$VehManuf)] <- sample(temp_data$VehManuf[!is.na(temp_data$VehManuf)], size = length(temp_data$VehManuf[is.na(temp_data$VehManuf)]), replace = T)
-
 temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(temp_data$DrivAge)], size = length(temp_data$DrivAge[is.na(temp_data$DrivAge)]), replace = T)
-
-
 #>>>>>>> c321a0f7888f9e9e86bc1497d1cde6d30f4b0dc5
 ```
 
@@ -564,6 +561,13 @@ chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$VehManuf, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$Area, manq, correct = F)
+```
+\clearpage
+
+## Code de l'imputation des valeurs manquantes
+```{r, eval=FALSE}
+imp <- mice(temp_data, m = 1, method = "polyreg")
+completedata <- complete(imp)
 ```
 \clearpage
 
