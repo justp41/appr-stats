@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r paquetages, message=FALSE, eval=TRUE, include=FALSE, echo = FALSE}
 ### Liste des paquetages
-liste.paquetage <- c("ggplot2", "CASdatasets", "mice", "stringi")
+liste.paquetage <- c("ggplot2", "CASdatasets", "mice", "stringi", "ggmice")
 ### On installe les paquetages de la liste qu'on a pas déjà
 inst <- liste.paquetage %in% installed.packages()
 if(length(liste.paquetage[!inst]) > 0) install.packages(liste.paquetage[!inst])
@@ -387,10 +387,14 @@ La figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corré
 Visualisons les données manquantes.
 
 ```{r MissingDataVis, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
-md.pattern(Veh[, colSums(is.na(Veh)) != 0], rotate.names = T)
+plot_pattern(Veh[, colSums(is.na(Veh)) != 0], rotate = F) +
+  labs(x = "Variable (nombre de valeurs manquantes)", y = "Fréquence du motif de non-réponse") +
+  theme(axis.title.x.top = element_blank(), axis.title.y.right = element_blank()) +
+  scale_fill_discrete(labels = c('Manquante', 'Observée'))
+                      
 ```
 
-Dans la figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
+Dans la Figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
 
 
 On remarque que lorsque la variable *Area* est inconnue, la variable *State* l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables, nous les retirons du jeu de données.
@@ -407,14 +411,14 @@ Lorsque *VehModel* est manquante, *VehGroup* et *VehManuf* le sont également. C
 
 La variable *DrivAge* est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations. Faisons un diagramme boxplot pour voir s'il y a un lien entre la présence d'une observation manquante pour cette variable et le montant des réclamations.
 
-```{r, DrivAgelinkwithClaims, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:DrivAgelinkwithClaims}Lien entre le patron de non-réponse de la variable «DrivAge» et le logarithme des réclamations"}
+```{r, DrivAgelinkwithClaims, message=FALSE, echo=FALSE, warning=FALSE, fig.cap="\\label{fig:DrivAgelinkwithClaims}Lien entre le patron de non-réponse de la variable «DrivAge» et le logarithme des réclamations"}
 manq <- is.na(VehClaimOnly$DrivAge)
 ggplot(VehClaimOnly, aes(x = manq, y = log(ClaimAmount))) +
   geom_boxplot() +
   ylab("Logarithme des réclamations") +
   xlab("Patron de non-réponse de «DrivAge»")
 ```
-Vu le grand écart entre le logarithme des réclamations quand la variable *DrivAge* est absente versus quand elle est présente, il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Les *p-values* des tests entre le patron de non-réponse de *DrivAge* et les variables *Gender*, *VehManuf*, *State* et *Area* sont pratiquement nulles. L'approche des cas complets n'est pas appropriée quand le patron de non-réponse n'est pas MCAR, donc une méthode d'imputation stochastique sera privilégiée. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
+Vu le grand écart entre le logarithme des réclamations quand la variable *DrivAge* est absente versus quand elle est présente dans la Figure \ref{fig:DrivAgelinkwithClaims}, il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Les *p-values* des tests entre le patron de non-réponse de *DrivAge* et les variables *Gender*, *VehManuf*, *State* et *Area* sont pratiquement nulles. L'approche des cas complets n'est pas appropriée quand le patron de non-réponse n'est pas MCAR, donc une méthode d'imputation stochastique sera privilégiée. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
 
 
 
