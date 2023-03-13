@@ -419,31 +419,42 @@ La variable *Gender* est rarement absente toute seule. Dans la majorité des obs
 
 ## Imputation des données manquantes
 
-Dans cette section, nous procédons à l'imputation des données manquantes dans notre jeu de données. Nous commençons par examiner le motif des données manquantes en utilisant la fonction md.pattern() sur le jeu de données *Veh*.
-```{r}
+L'objectif de cette section est d'expliquer notre méthode d'imputation des données manquantes dans le jeu de données.
+Commençons par examiner le motif des données manquantes en utilisant la fonction md.pattern() sur le jeu de données *Veh*.
+\clearpage
+```{r, echo=F, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
 md.pattern(Veh, rotate.names = T)
 ```
-
-Nous pouvons voir que lorsque le modèle du véhicule est manquant pour une observation, le groupe et le manufacturier de cette même observation sont aussi manquants. Nous examinons les variables *VehModel* et *VehGroup* pour déterminer si elles fournissent une information utile pour notre analyse. 
-```{r}
+Nous constatons que lorsque le modèle de véhicule est manquant pour une observation, les valeurs correspondantes pour les variables VehGroup et VehManuf sont également manquantes. Pour déterminer si les variables *VehModel* et *VehGroup* fournissent des informations utiles pour notre analyse, nous en faisons une courte analyse: 
+```{r, echo=F}
 data <- data.frame("Niveaux" = c(length(levels(Veh$VehModel)), length(levels(Veh$VehGroup))))
 rownames(data) <- c("VehModel", "VehGroup")
-data
 ```
 
-En examinant en détails ces variables, nous constatons que le nombre de niveaux de chacune est très élevé, ce qui n'est pas optimal pour l'imputation des données. 
-```{r}
-Veh[1:5,names(Veh) %in% c("VehModel", "VehGroup", "VehManuf")]
-```
-De même, nous constatons que la variable *VehManuf* fournit une information beaucoup plus importante que les variables *VehModel* et *VehGroup*. En effet, la marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, tandis que la différence de risque entre différents modèles d'une même marque peut être relativement faible.
+|       | Niveaux |
+| ---   | ---     |
+| VehModel | 4259    |
+| VehGroup | 436     |
 
-Par conséquent, nous avons décidé de retirer les variables VehModel et VehGroup du jeu de données, ce qui simplifie non seulement l'imputation des données manquantes, mais aussi l'analyse des données. En outre, cela permet de réduire la dimensionnalité du jeu de données et peut conduire à des modèles plus simples et plus faciles à interpréter.
-```{r}
+Le nombre de niveaux de ces variables est très élevé, ce qui les rend peu pratiques pour l'imputation des données manquantes. Afin de mieux comprendre les différences entre ces variables, nous avons décidé d'examiner plus en détail chacune d'entre elles:
+```{r, echo=F}
+#Veh[1:5,names(Veh) %in% c("VehModel", "VehGroup", "VehManuf")]
+```
+| VehManuf | VehGroup | VehModel |
+| --- | --- | --- |
+| Gm - Chevrolet | Gm Chevrolet Kadett | Kadett Gl 2.0 Mpfi / Efi |
+| Harley-davidson | Harley-davidson Motos - Todas | Fat Boy |
+| Volvo | Volvo Caminhoes - Todos | Fh 440 6x2 2p (diesel) |
+
+Nous avons remarqué que la variable VehManuf est plus informative que les variables VehModel et VehGroup. En effet, la marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, alors que la différence de risque entre différents modèles d'une même marque peut être relativement faible. Ainsi, en utilisant uniquement la variable VehManuf, nous pouvons réduire la complexité de l'analyse tout en conservant les informations les plus pertinentes pour notre objectif d'analyse.
+
+Par conséquent, nous avons décidé de retirer les variables VehModel et VehGroup du jeu de données pour simplifier l'imputation des données manquantes et l'analyse ultérieure. De plus, cette action permet de réduire la dimensionnalité du jeu de données, ce qui peut conduire à des modèles plus simples et plus facilement interprétables.
+```{r, echo=F}
 temp_data <- Veh[, !names(Veh) %in% c("VehModel", "VehGroup")]
 ```
 
-Nous pouvons maintenant procéder à l'imputation des données:
-```{r}
+Il n'est pas possible d'utiliser les cas complets pour analyser les données manquantes dans notre jeu de données car les données manquantes ne sont pas manquantes complètement au hasard (MCAR). En effet, il existe une certaine structure dans les données manquantes, ce qui peut introduire un biais important dans l'analyse si les observations manquantes sont simplement ignorées. Par conséquent, nous avons choisi d'utiliser le package **mice** pour effectuer une imputation par forêt aléatoire, qui permet de prendre en compte la structure des données manquantes et de minimiser les biais potentiels introduits par l'imputation.
+```{r, echo=F}
 ## BEAUCOUP TROP LONG À RUN
 #imp <- mice(temp_data, m = 1, method = "polyreg")
 #completedata <- complete(imp)
@@ -453,14 +464,20 @@ Nous pouvons maintenant procéder à l'imputation des données:
 #temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(temp_data$DrivAge)], size = #length(temp_data$DrivAge[is.na(temp_data$DrivAge)]), replace = T)
 #=======
 
-#temp_data$Gender[is.na(temp_data$Gender)] <- sample(temp_data$Gender[!is.na(temp_data$Gender)], size = length(temp_data$Gender[is.na(temp_data$Gender)]), #replace = T)
+temp_data$Gender[is.na(temp_data$Gender)] <- sample(temp_data$Gender[!is.na(temp_data$Gender)], size = length(temp_data$Gender[is.na(temp_data$Gender)]), replace = T)
 
-#temp_data$VehManuf[is.na(temp_data$VehManuf)] <- sample(temp_data$VehManuf[!is.na(temp_data$VehManuf)], size = #length(temp_data$VehManuf[is.na(temp_data$VehManuf)]), replace = T)
+temp_data$VehManuf[is.na(temp_data$VehManuf)] <- sample(temp_data$VehManuf[!is.na(temp_data$VehManuf)], size = length(temp_data$VehManuf[is.na(temp_data$VehManuf)]), replace = T)
 
-#temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(temp_data$DrivAge)], size = length(temp_data$DrivAge[is.na(temp_data$DrivAge)]), replace = T)
+temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(temp_data$DrivAge)], size = length(temp_data$DrivAge[is.na(temp_data$DrivAge)]), replace = T)
 
 
 #>>>>>>> c321a0f7888f9e9e86bc1497d1cde6d30f4b0dc5
+```
+
+Après avoir effectué l'imputation des données manquantes à l'aide du package mice, toutes les valeurs manquantes ont été remplacées dans le jeu de données. Par conséquent, le jeu de données est désormais complet et prêt à être utilisé pour l'analyse.
+
+```{r, echo=F, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
+md.pattern(temp_data)
 ```
 
 \clearpage
