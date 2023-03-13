@@ -47,22 +47,6 @@ Veh <- brvehins1a
 levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 ```
 
-# Création d'une nouvelle variable explicative
-
-Nous croyons que la variable sur le modèle de véhicule contient trop de niveaux, ce qui nuit à leur puissance prédictive et à leur interprétabilité. Nous avons donc choisi d'utiliser les expressions régulières pour regrouper les véhicules par marque. Nous faisons implicitement l'hypothèse que la gamme de prix au sein d'une même marque reste relativement la même. Cette simplification permet une meilleure interprétabilité. 
-
-
-```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
-Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel
-                                               , regex="^([a-zA-Z]|[0-9]|[-]|[ ])* -"))
-Veh$VehManuf[Veh$VehModel == "Outros"] <- "Other"
-Veh$VehManuf <- as.factor(Veh$VehManuf)
-lvl <- levels(Veh$VehManuf)
-lvl[which(table(Veh$VehManuf) < 100)] <- "Other"
-levels(Veh$VehManuf) <- lvl
-```
-
-\clearpage
 
 # Analyse Exploratoire
 
@@ -99,11 +83,11 @@ VehClaimOnly$LogClaim <- log(VehClaimOnly$TotClaimExpUnit)
 
 ## Somme des réclamations
 
-La somme des réclamations associées à chaque assuré est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0, soit `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. 
-
+La somme des réclamations associées à chaque assuré est la variable réponse pour ce projet. Cette variable prend fréquemment la valeur de 0, soit `r sum(na.omit(Veh$ClaimAmount == 0))` fois sur `r sum(!is.na(Veh$ClaimAmount))`. Cela revient à dire qu'un assuré ne fera pas de réclamation `r round(sum(na.omit(Veh$ClaimAmount == 0))/sum(!is.na(Veh$ClaimAmount)), 3)*100`% du temps. La Table 1 présente d'autres informations notables sur cette variable.
 
 \begin{center}
-Table 1 : Statistiques sommaires du logarithme des réclamations
+Table 1 : Statistiques sommaires des réclamations
+
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
@@ -129,11 +113,11 @@ Comme on peut voir dans la Figure \ref{fig:HistRecl}, la distribution est quelqu
 \clearpage
 
 ## Exposition
-
-Le minimum est de 1/365, soit d'une journée. Il semble y avoir beaucoup d'annulations de même que des clients particulièrement fidèles puisque la médiane d'exposition est de moins d'un an tandis que la moyenne est de plus de 3 ans.
+Sans surprise, la Table 2, traitant de l'exposition, présente un minimum de 1/365, soit une journée. Certaines combinaisons d'assuré-véhicule sont beaucoup plus communes que d'autres, de sorte que l'écart-type est particulièrement élevé, de même que le maximum.
 
 \begin{center}
 Table 2 : Statistiques sommaires de l'exposition
+
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
@@ -158,10 +142,12 @@ On voit aisément dans la Figure \ref{fig:PointExpos} que le montant de réclama
 
 ## Genre
 
-La variable **Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*.
+La variable**Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*, dont les fréquences sont présentées à la Table 3.
+
 
 \begin{center}
-Table 3 : Fréquences associées à la variable *Genre*
+Table 3 : Fréquences associées à la variable "Genre"
+
 \begin{tabular}{ |c|c|c|c|c| } 
  \hline
   & Male & Female & Corporate & NA \\ 
@@ -171,10 +157,11 @@ Table 3 : Fréquences associées à la variable *Genre*
 \end{tabular}
 \end{center}
 
-En analysant le lien avec les réclamations, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate*. Étant donné la très grande exposition qui y est associée, c'est évidemment absurde et on en déduit que l'assureur demande l'information sur le conducteur lorsqu'un accident survient et qu'une réclamation est nécessaire. Ainsi, il ajoute l'information rétrospectivement. Pour faire des prédictions, il sera possiblement nécessaire de régrouper le genre *Corporate* avec les clients pour lesquels l'information sur le genre est inconnue. 
+En analysant le lien avec les réclamations à la Table 4, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate*. Étant donné la très grande exposition qui y est associée, c'est évidemment absurde et on en déduit que l'assureur demande l'information sur le conducteur lorsqu'un accident survient et qu'une réclamation est nécessaire. Ainsi, il ajoute l'information rétrospectivement. Pour faire des prédictions, il sera possiblement nécessaire de régrouper le genre *Corporate* avec les clients pour lesquels l'information sur le genre est inconnue. 
 
 \begin{center}
-Table 4 : Fréquences de non-réclamation pour la variable *Genre*
+Table 4 : Fréquences de non-réclamation pour la variable "Genre"
+
 \begin{tabular}{ |c|c|c|c|c| } 
  \hline
   & Male & Female & Corporate & NA \\ 
@@ -199,10 +186,11 @@ Les moyennes des réclamations ne semblent pas changer d'un genre à un autre, m
 
 ## Âge du conducteur
 
-La variable de l'âge du conducteur n'est pas continue, mais plutôt divisée en 5 groupes. La fréquence de chaque niveau est illustrée ci-dessous :
+La variable de l'âge du conducteur n'est pas continue, mais plutôt divisée en 5 groupes. La fréquence de chaque niveau est illustrée ci-dessous à la Table 5.
 
 \begin{center}
-Table 5 : Fréquences associées à la variable *Âge du conducteur*
+Table 5 : Fréquences associées à la variable "Âge du conducteur"
+
 \begin{tabular}{ |c|c|c|c|c|c| } 
  \hline
   & 18-25 & 26-35 & 36-45 & 46-55 & >55 \\ 
@@ -228,10 +216,11 @@ ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) +
 
 ## Année du véhicule
 
-Une autre variable explicative disponible est l'année du véhicule. 
+Une autre variable explicative disponible est l'année du véhicule. Tel qu'attendu, on constate que la grande majorité du parc automobile est récent. En effet, la Table 6 démontre un faible écart-type de même qu'une médiane très récente.
 
 \begin{center}
 Table 6 : Statistiques sommaires de l'année du véhicule
+
 \begin{tabular}{ |c|c|c|c|c|c|c| } 
  \hline
  Moyenne & Médiane & Écart-type & Minimum & Maximum \\ 
@@ -427,6 +416,22 @@ Vu le grand écart entre le logarithme des réclamations quand la variable *Driv
 La variable *Gender* est rarement absente toute seule. Dans la majorité des observations où cette variable est absente, *DrivAge* l'est également. Cela devra être pris en considération s'il est nécessaire d'imputer les données manquantes puisque l'ordre dans lequel les variables sont imputées a une incidence. Testons l'hypothèse nulle que le patron de non-réponse de la variable *Gender* est MCAR avec des tests du khi-carré de Pearson. Ces tests se retrouvent dans l'annexe. Les *p-values* des tests comparant le patron de non-réponse de la variable *Gender* aux variables *DrivAge*, *VehManuf*, *State* et *Area* sont tous très près de 0. Une fois de plus, l'hypothèse nulle est rejetée : les observations manquantes de la variable *Gender* ne sont pas MCAR.  
 
 
+# Création d'une nouvelle variable explicative
+
+Nous croyons que la variable sur le modèle de véhicule contient trop de niveaux, ce qui nuit à leur puissance prédictive et à leur interprétabilité. Nous avons donc choisi d'utiliser les expressions régulières pour regrouper les véhicules par marque. Nous faisons implicitement l'hypothèse que la gamme de prix au sein d'une même marque reste relativement la même. Cette simplification permet une meilleure interprétabilité. 
+
+
+```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
+Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel
+                                               , regex="^([a-zA-Z]|[0-9]|[-]|[ ])* -"))
+Veh$VehManuf[Veh$VehModel == "Outros"] <- "Other"
+Veh$VehManuf <- as.factor(Veh$VehManuf)
+lvl <- levels(Veh$VehManuf)
+lvl[which(table(Veh$VehManuf) < 100)] <- "Other"
+levels(Veh$VehManuf) <- lvl
+```
+
+\clearpage
 
 
 ## Imputation des données manquantes
