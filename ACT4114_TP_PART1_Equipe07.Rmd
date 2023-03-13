@@ -47,6 +47,16 @@ Veh <- brvehins1a
 levels(Veh$DrivAge) <- levels(Veh$DrivAge)[c(2, 3, 4, 5, 1)]
 ```
 
+```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
+### Nouvelle variable
+Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel
+                                               , regex="^([a-zA-Z]|[0-9]|[-]|[ ])* -"))
+Veh$VehManuf[Veh$VehModel == "Outros"] <- "Other"
+Veh$VehManuf <- as.factor(Veh$VehManuf)
+lvl <- levels(Veh$VehManuf)
+lvl[which(table(Veh$VehManuf) < 100)] <- "Other"
+levels(Veh$VehManuf) <- lvl
+```
 
 # Analyse Exploratoire
 
@@ -421,16 +431,6 @@ La variable *Gender* est rarement absente toute seule. Dans la majorité des obs
 
 Nous croyons que la variable sur le modèle de véhicule contient trop de niveaux, ce qui nuit à leur puissance prédictive et à leur interprétabilité. Nous avons donc choisi d'utiliser les expressions régulières pour regrouper les véhicules par marque. Nous faisons implicitement l'hypothèse que la gamme de prix au sein d'une même marque reste relativement la même. Cette simplification permet une meilleure interprétabilité. 
 
-
-```{r ExprReg, message=FALSE, echo = FALSE, warning = FALSE}
-Veh$VehManuf <- gsub('.{2}$', '', stri_extract(Veh$VehModel
-                                               , regex="^([a-zA-Z]|[0-9]|[-]|[ ])* -"))
-Veh$VehManuf[Veh$VehModel == "Outros"] <- "Other"
-Veh$VehManuf <- as.factor(Veh$VehManuf)
-lvl <- levels(Veh$VehManuf)
-lvl[which(table(Veh$VehManuf) < 100)] <- "Other"
-levels(Veh$VehManuf) <- lvl
-```
 
 \clearpage
 
