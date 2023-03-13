@@ -30,7 +30,7 @@ options(scipen=999)
 
 # Introduction
 
-Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisée s'appelle *brvehins1a* et est basée sur une partie de l'*AUTOSEG*, un système de statistiques sur les automobiles assurées au Brésil. Sa structure est très intuitive. En bref, chaque profil véhicule-assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonnes homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. 
+Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisée s'appelle *brvehins1a* et est basée sur une partie de l'*AUTOSEG*, un système de statistiques sur les automobiles assurés au Brésil. Sa structure est très intuitive. En bref, chaque profil véhicule-assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonne homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. 
 
 En tout, chaque ligne comporte 23 variables, dont 5 variables décrivant les montants de réclamations, chacune étant associée à un type de dommage spécifique (par exemple une collision ou un vol de la voiture). Nous avons choisi de nous intéresser au montant total des réclamations pour un client et c'est donc la somme des 5 types de réclamations possibles qui sera notre variable réponse. Notre modèle utilisera les informations collectés par le système pour établir une prédiction de l'ensemble des coûts de réclamations que le client engendrera pour une exposition unitaire. À cette fin, il y a 9 variables explicatives sur lesquelles concentrer nos efforts. En effet, les autres variables sont dépendantes ou encore collige l'information rétrospectivement par rapport aux montants de réclamations.
 
@@ -152,7 +152,7 @@ On voit aisément dans la Figure \ref{fig:PointExpos} que le montant de réclama
 
 ## Genre
 
-La variable**Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*, dont les fréquences sont présentées à la Table 3.
+La variable **Gender** a quatre niveaux : *Male*, *Female*, *Corporate* et *NA*, dont les fréquences sont présentées à la Table 3.
 
 
 \begin{center}
@@ -273,8 +273,7 @@ ggplot(VehClaimOnly, aes(x=VehManufGraph, y=LogClaim)) +
   coord_flip()+
     theme_bw()
 ```
-
-La Figure \ref{fig:BoxPlotArea} présente la distribution du logarithme des réclamations selon les principales marques de véhicules présentes dans le jeu de données. Sans surprise, les véhicules les plus luxueux comme *Mercedes-Benz* sont titulaires des réclamations les plus importantes en moyenne. Cependant, comme cette base de donnée n'origine pas du Québec, il est important de rappeler qu'une partie non négligeable des réclamations sert à payer les dommages corporels de même que les dommage matériels à autrui. Donc même si l'assuré possède un véhicule plus abordable comme une *Kia*, on observe quand même quelques réclamations très substantielles. 
+Le graphique ci-haut présente la distribution du logarithme des réclamations selon les principales marques de véhicules présentes dans le jeu de données. Sans surprise, les véhicules les plus luxueux comme *Mercedes-Benz* sont titulaires des réclamations les plus importantes en moyenne. Cependant, comme cette base de donnée n'origine pas du Québec, il est important de rappeler qu'une partie non négligeable des réclamations sert à payer les dommages corporels de même que les dommage matériels à autrui. Donc même si l'assuré possède un véhicule plus abordable comme une *Kia*, on observe quand même quelques réclamations très substantielles. 
 Enfin, conformément aux variables précédentes, les réclamations sont significativement plus couteûses en moyenne lorsque la marque du véhicule est inconnue.
 
 \clearpage 
@@ -361,7 +360,7 @@ La prime totale présente clairement la meilleure puissance prédictive, mais el
 
 \clearpage
 
-## SumInsAvg
+## Montant d'assurance moyen
 
 Selon la documentation d'*AUTOSEG*, cette variable correspond à la moyenne pondéré par exposition du montant de réclamation. Nous émettons l'hypothèse que cette variable représente la limite supérieure des réclamations possibles. Cette hypothèse est importante car elle pourrait guider notre manière de construire le modèle. On peut explorer cette hypothèse avec le graphique suivant:
 
@@ -376,12 +375,13 @@ ggplot(VehClaimOnly,aes(x=LogClaim, y=log(SumInsAvg/ExposTotal) , col = LogClaim
     guides(color=FALSE)
 ```
 
-On voit donc dans la Figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré est supérieur au montant réclamé. On peut croire que les points sous la courbe représente des observations où le montant assuré a diminué (au renouvellement par exemple). En effet, si le montant assuré a été plus élevé par le passé et a diminué subitement, suite à un changement de véhicule par exemple, il est possible que les réclamations normalisées dépassent le montant assuré normalisée. Nous croyons donc que notre hypothèse est raisonnable et nous considérons avoir bien compris le sens de cette variable.
+On voit donc dans la figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré est supérieur au montant réclamé. On peut croire que les points sous la courbe représente des observations où le montant assuré a diminué (au renouvellement par exemple). En effet, si le montant assuré a été plus élevé par le passé et a diminué subitement, suite à un changement de véhicule par exemple, il est possible que les réclamations normalisées dépassent le montant assuré normalisée. Nous croyons donc que notre hypothèse est raisonnable et nous considérons avoir bien compris le sens de cette variable.
 
-La Figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corrélation entre le montant assuré et le montant de réclamation. Elle aura donc un grand impact sur le modèle quant à sa conception et à nos règles de décisions pour le domaine des prédictions.
+La figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corrélation entre le montant assuré et le montant de réclamation. Elle aura donc un grand impact sur le modèle quant à sa conception et à nos règles de décisions pour le domaine des prédictions.
 
 
 \clearpage
+
 # Traitement des valeurs manquantes
 
 ## Visualisation
@@ -390,7 +390,7 @@ Visualisons les données manquantes.
 
 ```{r MissingDataVis, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
 plot_pattern(Veh[, colSums(is.na(Veh)) != 0], rotate = F) +
-  labs(x = "Nombre de valeurs manquantes par variable", y = "Fréquence du motif de non-réponse") +
+  labs(x = "Variable (nombre de valeurs manquantes)", y = "Fréquence du motif de non-réponse") +
   theme(axis.title.x.top = element_blank(), axis.title.y.right = element_blank()) +
   scale_fill_discrete(labels = c('Manquante', 'Observée'))
                       
@@ -413,14 +413,14 @@ Lorsque *VehModel* est manquante, *VehGroup* et *VehManuf* le sont également. C
 
 La variable *DrivAge* est la plus absente du jeu de données; elle est manquante dans `r round(sum(is.na(Veh$DrivAge)) / nrow(Veh) * 100, 2)`% des observations. Faisons un diagramme boxplot pour voir s'il y a un lien entre la présence d'une observation manquante pour cette variable et le montant des réclamations.
 
-```{r, DrivAgelinkwithClaims, message=FALSE, echo=FALSE, warning=FALSE, fig.cap="\\label{fig:DAlinkCl}Lien entre le patron de non-réponse de la variable «DrivAge» et le logarithme des réclamations"}
-ggplot(VehClaimOnly, aes(x = is.na(VehClaimOnly$DrivAge), y = log(ClaimAmount))) +
+```{r, DrivAgelinkwithClaims, message=FALSE, echo=FALSE, warning=FALSE, fig.cap="\\label{fig:DrivAgelinkwithClaims}Lien entre le patron de non-réponse de la variable «DrivAge» et le logarithme des réclamations"}
+manq <- is.na(VehClaimOnly$DrivAge)
+ggplot(VehClaimOnly, aes(x = manq, y = log(ClaimAmount))) +
   geom_boxplot() +
   ylab("Logarithme des réclamations") +
   xlab("Patron de non-réponse de «DrivAge»")
 ```
-
-Vu le grand écart entre le logarithme des réclamations quand la variable *DrivAge* est absente versus quand elle est présente dans la Figure \ref{fig:DAlinkCl}, il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Les *p-values* des tests entre le patron de non-réponse de *DrivAge* et les variables *Gender*, *VehManuf*, *State* et *Area* sont pratiquement nulles. L'approche des cas complets n'est pas appropriée quand le patron de non-réponse n'est pas MCAR, donc une méthode d'imputation stochastique sera privilégiée. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
+Vu le grand écart entre le logarithme des réclamations quand la variable *DrivAge* est absente versus quand elle est présente dans la Figure \ref{fig:DrivAgelinkwithClaims}, il semble peu probable que les données manquantes de «DrivAge» soient MCAR. Effectivement, les tests du khi-carré de Pearson rejettent l'hyopthèse nulle que le Patron de non-réponse de cette variable est MCAR. Les *p-values* des tests entre le patron de non-réponse de *DrivAge* et les variables *Gender*, *VehManuf*, *State* et *Area* sont pratiquement nulles. L'approche des cas complets n'est pas appropriée quand le patron de non-réponse n'est pas MCAR, donc une méthode d'imputation stochastique sera privilégiée. Puisqu'il n'y a pas de test pour savoir si les données manquantes sont MAR ou NMAR, il est possible qu'un biais reste présent dans les données après l'imputation.
 
 
 
@@ -438,8 +438,13 @@ Nous croyons que la variable sur le modèle de véhicule contient trop de niveau
 ## Imputation des données manquantes
 
 L'objectif de cette section est d'expliquer notre méthode d'imputation des données manquantes dans le jeu de données.
+Commençons par examiner le motif des données manquantes en utilisant la fonction md.pattern() sur le jeu de données *Veh*.
 
-Nous avons constaté que lorsque le modèle de véhicule est manquant pour une observation, les valeurs correspondantes pour les variables VehGroup et VehManuf sont également manquantes. Pour déterminer si les variables *VehModel* et *VehGroup* fournissent des informations utiles pour notre analyse, nous en faisons une courte analyse: 
+
+```{r, echo=F, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
+md.pattern(Veh, rotate.names = T)
+```
+Nous constatons que lorsque le modèle de véhicule est manquant pour une observation, les valeurs correspondantes pour les variables VehGroup et VehManuf sont également manquantes. Pour déterminer si les variables *VehModel* et *VehGroup* fournissent des informations utiles pour notre analyse, nous en faisons une courte analyse: 
 ```{r, echo=F}
 data <- data.frame("Niveaux" = c(length(levels(Veh$VehModel)), length(levels(Veh$VehGroup))))
 rownames(data) <- c("VehModel", "VehGroup")
@@ -485,6 +490,10 @@ temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(t
 
 Après avoir effectué l'imputation des données manquantes à l'aide du package mice, toutes les valeurs manquantes ont été remplacées dans le jeu de données. Par conséquent, le jeu de données est désormais complet et prêt à être utilisé pour l'analyse.
 
+```{r, echo=F, message=FALSE, echo=FALSE, warning=FALSE, results='hide', fig.keep='all', fig.cap="\\label{fig:MissingDataVis}Visualisation des données manquantes"}
+md.pattern(temp_data)
+```
+
 \clearpage
 
 # Conclusion
@@ -527,7 +536,6 @@ chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$VehYear, manq, correct = F)
 ```
-\clearpage
 
 ### Patron de non-réponse de la variable «VehGroup»
 ```{r, message=FALSE}
@@ -537,7 +545,6 @@ chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$VehYear, manq, correct = F)
 ```
-\clearpage
 
 ### Patron de non-réponse de la variable «VehManuf»
 ```{r, message=FALSE}
@@ -547,7 +554,6 @@ chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$VehYear, manq, correct = F)
 ```
-\clearpage
 
 ### Patron de non-réponse de la variable «DrivAge»
 ```{r, message=FALSE}
@@ -557,7 +563,6 @@ chisq.test(Veh$VehManuf, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$Area, manq, correct = F)
 ```
-\clearpage
 
 ### Patron de non-réponse de la variable «Gender»
 ```{r, message=FALSE}
@@ -566,18 +571,4 @@ chisq.test(Veh$DrivAge, manq, correct = F)
 chisq.test(Veh$VehManuf, manq, correct = F)
 chisq.test(Veh$State, manq, correct = F)
 chisq.test(Veh$Area, manq, correct = F)
-```
-\clearpage
-
-## Code de l'imputation des valeurs manquantes
-```{r, eval=FALSE}
-imp <- mice(temp_data, m = 1, method = "polyreg")
-completedata <- complete(imp)
-```
-\clearpage
-
-## Code de l'imputation des valeurs manquantes
-```{r, eval=FALSE}
-imp <- mice(temp_data, m = 1, method = "polyreg")
-completedata <- complete(imp)
 ```
