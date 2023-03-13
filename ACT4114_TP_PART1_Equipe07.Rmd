@@ -1,4 +1,4 @@
----
+﻿---
 output:
   pdf_document:
     includes:
@@ -114,11 +114,11 @@ Puisqu'un montant de réclamation peut prendre des valeurs assez élevées, les 
 ggplot(VehClaimOnly, aes(x=LogClaim))+
   geom_histogram(fill="lightblue") +
   xlab("Logarithme des réclamations") +
-  ylab("Nombre d'occurences")+
+  ylab("Nombre d'occurrences")+
     theme_bw()
 ```
 
-Comme on peut voir dans la Figure \ref{fig:HistRecl}, la distribution est quelque peu asymétrique et la queue est très lourde. En effet, on observe une fréquence somme toute élevée de réclamations très importante. Il n'est pas rare que le logarithme naturel du montant de réclamations atteigne 10 et même plus, alors que la médiane est plutôt autour de 6.
+Comme on peut voir dans la Figure \ref{fig:HistRecl}, la distribution est quelque peu asymétrique et la queue est très lourde. En effet, on observe une fréquence somme toute élevée de réclamations très importantes. Il n'est pas rare que le logarithme naturel du montant de réclamations atteigne 10 et même plus, alors que la médiane est plutôt autour de 6.
 
 \clearpage
 
@@ -226,7 +226,7 @@ ggplot(VehClaimOnly, aes(x=DrivAge, y=LogClaim)) +
 
 ## Année du véhicule
 
-Une autre variable explicative disponible est l'année du véhicule. Tel qu'attendu, on constate que la grande majorité du parc automobile est récent. En effet, la Table 6 démontre un faible écart-type de même qu'une médiane très récente.
+Une autre variable explicative disponible est l'année du véhicule. Tel que attendu, on constate que la grande majorité du parc automobile est récent. En effet, la Table 6 démontre un faible écart-type de même qu'une médiane très récente.
 
 \begin{center}
 Table 6 : Statistiques sommaires de l'année du véhicule
@@ -275,8 +275,8 @@ ggplot(VehClaimOnly, aes(x=VehManufGraph, y=LogClaim)) +
 ```
 
 
-La Figure \ref{fig:BPArea} ci-haut présente la distribution du logarithme des réclamations selon les principales marques de véhicules présentes dans le jeu de données. Sans surprise, les véhicules les plus luxueux comme *Mercedes-Benz* sont titulaires des réclamations les plus importantes en moyenne. Cependant, comme cette base de donnée n'origine pas du Québec, il est important de rappeler qu'une partie non négligeable des réclamations sert à payer les dommages corporels de même que les dommage matériels à autrui. Donc même si l'assuré possède un véhicule plus abordable comme une *Kia*, on observe quand même quelques réclamations très substantielles. 
-Enfin, conformément aux variables précédentes, les réclamations sont significativement plus couteûses en moyenne lorsque la marque du véhicule est inconnue.
+La Figure \ref{fig:BPArea} ci-haut présente la distribution du logarithme des réclamations selon les principales marques de véhicules présentes dans le jeu de données. Sans surprise, les véhicules les plus luxueux comme *Mercedes-Benz* sont titulaires des réclamations les plus importantes en moyenne. Cependant, comme cette base de données ne proviennent pas du Québec, il est important de rappeler qu'une partie non négligeable des réclamations sert à payer les dommages corporels de même que les dommages matériels à autrui. Donc même si l'assuré possède un véhicule plus abordable comme une *Kia*, on observe quand même quelques réclamations très substantielles. 
+Enfin, conformément aux variables précédentes, les réclamations sont significativement plus couteuses en moyenne lorsque la marque du véhicule est inconnue.
 
 \clearpage 
 
@@ -324,7 +324,7 @@ ggplot(VehClaimOnly, aes(x=StateGraph, y=LogClaim)) +
     theme_bw()
 ```
 
-Un constat similaire est de mise quant au lien entre la ville (ou région administrative selon le cas) et les réclamations, comme le présente la Figure \ref{fig:BPState}. S'il est vrai qu'en moyenne les réclamations sont plus faibles dans la ville Rio de Janeiro qui a assurément la réputation d'accueillir une population moins aisée que Santa Catarina par exemple, il n'en demeure pas moins que cela varie énormément. Des extrèmes sont observés dans toutes les villes du graphique et il est difficile, de prime abord, de ne pas attribuer les écarts au simple hasard. 
+Un constat similaire est de mise quant au lien entre la ville (ou région administrative selon le cas) et les réclamations, comme le présente la Figure \ref{fig:BPState}. S'il est vrai qu'en moyenne les réclamations sont plus faibles dans la ville Rio de Janeiro qui a assurément la réputation d'accueillir une population moins aisée que Santa Catarina par exemple, il n'en demeure pas moins que cela varie énormément. Des extrêmes sont observés dans toutes les villes du graphique et il est difficile, de prime abord, de ne pas attribuer les écarts au simple hasard. 
 
 \clearpage
 
@@ -358,13 +358,13 @@ ggplot(VehClaimOnly, aes(x=log(PremTotal/ExposTotal), y=LogClaim)) +
 
 On voit dans la Figure \ref{fig:PointPrem} qu'il y a une énorme corrélation entre le montant de prime par exposition et le montant des réclamations. C'est un constat auquel on peut s'attendre considérant que le but de la prime est de couvrir les réclamations.  
 
-La prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle. Effectivement, il va sans dire que le but de notre projet est de développer notre propre modèle de calcul de la prime. Il est important de garder à l'esprit que la prime est assurément calculée à partir des variables présentées plus haut, en soi, elle n'apporte donc aucune nouvelle information puisqu'elle est elle même une combinaison de toutes les autres variables. Ainsi, il serait contre-productif de tenter de réutiliser la prime dans notre modèle.
+La prime totale présente clairement la meilleure puissance prédictive, mais elle ne peut être utilisée pour le modèle. Effectivement, il va sans dire que le but de notre projet est de développer notre propre modèle de calcul de la prime. Il est important de garder à l'esprit que la prime est assurément calculée à partir des variables présentées plus haut, en soi, elle n'apporte donc aucune nouvelle information puisqu'elle est elle-même une combinaison de toutes les autres variables. Ainsi, il serait contreproductif de tenter de réutiliser la prime dans notre modèle.
 
 \clearpage
 
 ## Montant d'assurance moyen
 
-Selon la documentation d'*AUTOSEG*, cette variable correspond à la moyenne pondéré par exposition du montant de réclamation. Nous émettons l'hypothèse que cette variable représente la limite supérieure des réclamations possibles. Cette hypothèse est importante car elle pourrait guider notre manière de construire le modèle. On peut explorer cette hypothèse avec le graphique suivant:
+Selon la documentation d'*AUTOSEG*, cette variable correspond à la moyenne pondérée par exposition du montant de réclamation. Nous émettons l'hypothèse que cette variable représente la limite supérieure des réclamations possibles. Cette hypothèse est importante car elle pourrait guider notre manière de construire le modèle. On peut explorer cette hypothèse avec le graphique suivant:
 
 ```{r PreuveIns, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
 library(gridExtra)
@@ -377,9 +377,10 @@ ggplot(VehClaimOnly,aes(x=LogClaim, y=log(SumInsAvg/ExposTotal) , col = LogClaim
     guides(color=FALSE)
 ```
 
-On voit donc dans la Figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré est supérieur au montant réclamé. On peut croire que les points sous la courbe représente des observations où le montant assuré a diminué (au renouvellement par exemple). En effet, si le montant assuré a été plus élevé par le passé et a diminué subitement, suite à un changement de véhicule par exemple, il est possible que les réclamations normalisées dépassent le montant assuré normalisée. Nous croyons donc que notre hypothèse est raisonnable et nous considérons avoir bien compris le sens de cette variable.
+On voit donc dans la Figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré est supérieur au montant réclamé. On peut croire que les points sous la courbe représentent des observations où le montant assuré a diminué (au renouvèlement par exemple). En effet, si le montant assuré a été plus élevé par le passé et a diminué subitement, suite à un changement de véhicule par exemple, il est possible que les réclamations normalisées dépassent le montant assuré normalisé. Nous croyons donc que notre hypothèse est raisonnable et nous considérons avoir bien compris le sens de cette variable.
 
-La Figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corrélation entre le montant assuré et le montant de réclamation. Elle aura donc un grand impact sur le modèle quant à sa conception et à nos règles de décisions pour le domaine des prédictions.
+La Figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corrélation entre le montant assuré et le montant de réclamation. Elle aura donc un grand impact sur le modèle quant à sa con
+ception et à nos règles de décisions pour le domaine des prédictions.
 
 
 \clearpage
@@ -398,7 +399,7 @@ plot_pattern(Veh[, colSums(is.na(Veh)) != 0], rotate = F) +
                       
 ```
 
-Dans la Figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifer le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
+Dans la Figure \ref{fig:MissingDataVis}, les variables n'ayant pas d'observations manquantes n'ont pas été affichées afin de simplifier le diagramme. Au total, `r round(sum(rowSums(is.na(Veh)) != 0) / nrow(Veh) * 100, 2)`% des rangées ont au moins une variable manquante.
 
 
 On remarque que lorsque la variable *Area* est inconnue, la variable *State* l'est aussi. Puisqu'il y a  seulement `r sum(is.na(Veh$Area) & is.na(Veh$State))` observations manquantes pour ces deux variables, nous les retirons du jeu de données.
@@ -406,7 +407,7 @@ On remarque que lorsque la variable *Area* est inconnue, la variable *State* l'e
 Veh <- Veh[!is.na(Veh$Area) & !is.na(Veh$State),]
 ```
 
-Il y a seulement une observation avec une donnée manquante pour la variable *VehYear*. En raison de la faible importance de cette observation vis à vis la grande taille du jeu de donnée, nous la retirons également du jeu de données.
+Il y a seulement une observation avec une donnée manquante pour la variable *VehYear*. En raison de la faible importance de cette observation vis-à-vis la grande taille du jeu de donnée, nous la retirons également du jeu de données.
 ```{r, message=FALSE, echo=FALSE}
 Veh <- Veh[!is.na(Veh$VehYear),]
 ```
