@@ -275,7 +275,7 @@ ggplot(VehClaimOnly, aes(x=VehManufGraph, y=LogClaim)) +
 ```
 
 
-La Figure \ref{fig:BPArea} ci-haut présente la distribution du logarithme des réclamations selon les principales marques de véhicules présentes dans le jeu de données. Sans surprise, les véhicules les plus luxueux comme *Mercedes-Benz* sont titulaires des réclamations les plus importantes en moyenne. Cependant, comme cette base de données ne proviennent pas du Québec, il est important de rappeler qu'une partie non négligeable des réclamations sert à payer les dommages corporels de même que les dommages matériels à autrui. Donc même si l'assuré possède un véhicule plus abordable comme une *Kia*, on observe quand même quelques réclamations très substantielles. 
+La Figure \ref{fig:BPArea} ci-haut présente la distribution du logarithme des réclamations selon les principales marques de véhicules présentes dans le jeu de données. Sans surprise, les véhicules les plus luxueux comme *Mercedes-Benz* sont titulaires des réclamations les plus importantes en moyenne. Cependant, comme cette base de données n'origine pas du Québec, il est important de rappeler qu'une partie non négligeable des réclamations sert à payer les dommages corporels de même que les dommages matériels à autrui. Donc même si l'assuré possède un véhicule plus abordable comme une *Kia*, on observe quand même quelques réclamations très substantielles. 
 Enfin, conformément aux variables précédentes, les réclamations sont significativement plus couteuses en moyenne lorsque la marque du véhicule est inconnue.
 
 \clearpage 
@@ -364,11 +364,13 @@ La prime totale présente clairement la meilleure puissance prédictive, mais el
 
 ## Montant d'assurance moyen
 
-Selon la documentation d'*AUTOSEG*, cette variable correspond à la moyenne pondérée par exposition du montant de réclamation. Nous émettons l'hypothèse que cette variable représente la limite supérieure des réclamations possibles. Cette hypothèse est importante car elle pourrait guider notre manière de construire le modèle. On peut explorer cette hypothèse avec le graphique suivant:
+Selon la documentation d'*AUTOSEG*, cette variable correspond à la moyenne pondérée par exposition du montant d'assurance. On s'attend donc à ce que les réclamations moyennes soient inférieures à cette limite d'assurance moyenne.
 
 ```{r PreuveIns, message=FALSE, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:PointSumInsAvg}Logarithme des réclamations en fonction de SumInsAvg"}
+VehClaimOnly2 <- VehClaimOnly[log(VehClaimOnly$SumInsAvg/VehClaimOnly$ExposTotal) > 0, ]
+
 library(gridExtra)
-ggplot(VehClaimOnly,aes(x=LogClaim, y=log(SumInsAvg/ExposTotal) , col = LogClaim < log(SumInsAvg/ExposTotal)))+
+ggplot(VehClaimOnly2,aes(x=LogClaim, y=log(SumInsAvg/ExposTotal) , col = LogClaim < log(SumInsAvg/ExposTotal)))+
     geom_point(alpha=0.3)+
     stat_function(fun=function(x) x,col = "black")+
     theme_bw()+
@@ -377,11 +379,7 @@ ggplot(VehClaimOnly,aes(x=LogClaim, y=log(SumInsAvg/ExposTotal) , col = LogClaim
     guides(color=FALSE)
 ```
 
-On voit donc dans la Figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré est supérieur au montant réclamé. On peut croire que les points sous la courbe représentent des observations où le montant assuré a diminué (au renouvèlement par exemple). En effet, si le montant assuré a été plus élevé par le passé et a diminué subitement, suite à un changement de véhicule par exemple, il est possible que les réclamations normalisées dépassent le montant assuré normalisé. Nous croyons donc que notre hypothèse est raisonnable et nous considérons avoir bien compris le sens de cette variable.
-
-La Figure \ref{fig:PointSumInsAvg} nous indique aussi qu'il y a une forte corrélation entre le montant assuré et le montant de réclamation. Elle aura donc un grand impact sur le modèle quant à sa con
-ception et à nos règles de décisions pour le domaine des prédictions.
-
+Effectivement, on voit dans la Figure \ref{fig:PointSumInsAvg} que dans la très grande majorité des cas, le montant assuré moyen est supérieur au montant réclamé moyen. Les points sous la courbe sont principalement attribuable au hasard. En effet, si la proportion de réclamation est plus importante pour ceux qui ont une limite plus élevée, il est tout à fait concevable que la réclamation moyenne dépasse la limite d'assurance moyenne.
 
 \clearpage
 
@@ -434,7 +432,24 @@ La variable *Gender* est rarement absente toute seule. Dans la majorité des obs
 
 # Création d'une nouvelle variable explicative
 
-Nous croyons que la variable sur le modèle de véhicule contient trop de niveaux, ce qui nuit à leur puissance prédictive et à leur interprétabilité. Nous avons donc choisi d'utiliser les expressions régulières pour regrouper les véhicules par marque. Nous faisons implicitement l'hypothèse que la gamme de prix au sein d'une même marque reste relativement la même. Cette simplification permet une meilleure interprétabilité. 
+Nous croyons que la variable sur le modèle de véhicule contient trop de niveaux, ce qui nuit à leur puissance prédictive et à leur interprétabilité. Nous avons donc choisi d'utiliser les expressions régulières pour regrouper les véhicules par marque. Nous faisons implicitement l'hypothèse que la gamme de prix au sein d'une même marque reste relativement la même. Cette simplification permet une meilleure interprétabilité. De plus, un exemple simple de la création de la nouvelle variable (*VehManuf*) est présenté à la Table 7.
+
+
+\begin{center}
+Table 7 : Exemple de la nouvelle variable
+
+\begin{tabular}{ |c|c| } 
+ \hline
+ VehModel & VehManuf \\ 
+ \hline
+ Ford - Ecosport Xlt 2.0/ 2.0 Flex 16v 5p Mec. & Ford \\ 
+ \hline
+ Fiat - Stilo 1.8 Sporting Flex 8v 5p & Fiat \\
+ \hline
+ Toyota - Corolla Xei 1.8/1.8 Flex 16v Mec. & Toyota \\
+ \hline
+\end{tabular}
+\end{center}
 
 
 \clearpage
@@ -443,7 +458,7 @@ Nous croyons que la variable sur le modèle de véhicule contient trop de niveau
 ## Imputation des données manquantes
 
 L'objectif de cette section est d'expliquer notre méthode d'imputation des données manquantes dans le jeu de données.
-En examinant le motif des données manquantes sur le jeu de données, on constate rapidement que lorsque le modèle de véhicule est manquant pour une observation, les valeurs correspondantes pour les variables VehGroup et VehManuf sont également manquantes. Pour déterminer si les variables *VehModel* et *VehGroup* fournissent des informations utiles pour notre analyse, nous en faisons une courte analyse: 
+En examinant le motif des données manquantes sur le jeu de données, on constate rapidement que lorsque le modèle de véhicule est manquant pour une observation, les valeurs correspondantes pour les variables *VehGroup* et *VehManuf* sont également manquantes. Pour déterminer si les variables *VehModel* et *VehGroup* fournissent des informations utiles pour notre modèle, nous en faisons une courte analyse: 
 
 ```{r, echo=F}
 data <- data.frame("Niveaux" = c(length(levels(Veh$VehModel)), length(levels(Veh$VehGroup))))
@@ -467,9 +482,9 @@ Le nombre de niveaux de ces variables est très élevé, ce qui les rend peu pra
 | Harley-davidson | Harley-davidson Motos - Todas | Fat Boy |
 | Volvo | Volvo Caminhoes - Todos | Fh 440 6x2 2p (diesel) |
 
-Nous avons remarqué que la variable VehManuf est plus sommative que les variables VehModel et VehGroup. La marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, alors que la différence de risque entre différents modèles d'une même marque peut être relativement faible. Sur cette base, en utilisant uniquement la variable VehManuf, il est possible de réduire la complexité de l'analyse tout en conservant les informations les plus pertinentes pour l'objectif de notre analyse.
+Nous avons remarqué que la variable *VehManuf* est plus sommative que les variables *VehModel* et *VehGroup*. La marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, alors que la différence de risque entre différents modèles d'une même marque peut être relativement faible. Sur cette base, en utilisant uniquement la variable VehManuf, il est possible de réduire la complexité de l'analyse tout en conservant les informations les plus pertinentes pour l'objectif de notre analyse.
 
-Par conséquent, nous avons décidé de retirer les variables VehModel et VehGroup du jeu de données pour simplifier l'imputation des données manquantes et l'analyse ultérieure. De plus, cette action permet de réduire la dimensionnalité du jeu de données, ce qui peut conduire à des modèles plus simples et plus facilement interprétables. Certains tests supplémentaires pourront être faits lors du développement du modèle afin de déterminer si les variables sont bel et bien, commme on le pense, trop spécifiques et granulaires pour être utilisées.
+Par conséquent, nous avons décidé de retirer les variables *VehModel* et *VehGroup* du jeu de données pour simplifier l'imputation des données manquantes et l'analyse ultérieure. De plus, cette action permet de réduire la dimensionnalité du jeu de données, ce qui peut conduire à des modèles plus simples et plus facilement interprétables. Certains tests supplémentaires pourront être faits lors du développement du modèle afin de déterminer si les variables sont bel et bien, commme on le pense, trop spécifiques et granulaires pour être utilisées.
 
 ```{r, echo=F}
 temp_data <- Veh[, !names(Veh) %in% c("VehModel", "VehGroup")]
