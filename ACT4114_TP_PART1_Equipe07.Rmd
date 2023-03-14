@@ -443,9 +443,8 @@ Nous croyons que la variable sur le modèle de véhicule contient trop de niveau
 ## Imputation des données manquantes
 
 L'objectif de cette section est d'expliquer notre méthode d'imputation des données manquantes dans le jeu de données.
-Commençons par examiner le motif des données manquantes en utilisant la fonction md.pattern() sur le jeu de données *Veh*.
+En examinant le motif des données manquantes sur le jeu de données, on constate rapidement que lorsque le modèle de véhicule est manquant pour une observation, les valeurs correspondantes pour les variables VehGroup et VehManuf sont également manquantes. Pour déterminer si les variables *VehModel* et *VehGroup* fournissent des informations utiles pour notre analyse, nous en faisons une courte analyse: 
 
-Nous avons constaté que lorsque le modèle de véhicule est manquant pour une observation, les valeurs correspondantes pour les variables VehGroup et VehManuf sont également manquantes. Pour déterminer si les variables *VehModel* et *VehGroup* fournissent des informations utiles pour notre analyse, nous en faisons une courte analyse: 
 ```{r, echo=F}
 data <- data.frame("Niveaux" = c(length(levels(Veh$VehModel)), length(levels(Veh$VehGroup))))
 rownames(data) <- c("VehModel", "VehGroup")
@@ -457,23 +456,27 @@ rownames(data) <- c("VehModel", "VehGroup")
 | VehGroup | 436     |
 
 Le nombre de niveaux de ces variables est très élevé, ce qui les rend peu pratiques pour l'imputation des données manquantes. Afin de mieux comprendre les différences entre ces variables, nous avons décidé d'examiner plus en détail chacune d'entre elles:
+
 ```{r, echo=F}
 #Veh[1:5,names(Veh) %in% c("VehModel", "VehGroup", "VehManuf")]
 ```
+
 | VehManuf | VehGroup | VehModel |
 | --- | --- | --- |
 | Gm - Chevrolet | Gm Chevrolet Kadett | Kadett Gl 2.0 Mpfi / Efi |
 | Harley-davidson | Harley-davidson Motos - Todas | Fat Boy |
 | Volvo | Volvo Caminhoes - Todos | Fh 440 6x2 2p (diesel) |
 
-Nous avons remarqué que la variable VehManuf est plus informative que les variables VehModel et VehGroup. En effet, la marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, alors que la différence de risque entre différents modèles d'une même marque peut être relativement faible. Ainsi, en utilisant uniquement la variable VehManuf, nous pouvons réduire la complexité de l'analyse tout en conservant les informations les plus pertinentes pour notre objectif d'analyse.
+Nous avons remarqué que la variable VehManuf est plus sommative que les variables VehModel et VehGroup. La marque d'un véhicule peut avoir un impact significatif sur le risque associé à une observation, alors que la différence de risque entre différents modèles d'une même marque peut être relativement faible. Sur cette base, en utilisant uniquement la variable VehManuf, il est possible de réduire la complexité de l'analyse tout en conservant les informations les plus pertinentes pour l'objectif de notre analyse.
 
-Par conséquent, nous avons décidé de retirer les variables VehModel et VehGroup du jeu de données pour simplifier l'imputation des données manquantes et l'analyse ultérieure. De plus, cette action permet de réduire la dimensionnalité du jeu de données, ce qui peut conduire à des modèles plus simples et plus facilement interprétables.
+Par conséquent, nous avons décidé de retirer les variables VehModel et VehGroup du jeu de données pour simplifier l'imputation des données manquantes et l'analyse ultérieure. De plus, cette action permet de réduire la dimensionnalité du jeu de données, ce qui peut conduire à des modèles plus simples et plus facilement interprétables. Certains tests supplémentaires pourront être faits lors du développement du modèle afin de déterminer si les variables sont bel et bien, commme on le pense, trop spécifiques et granulaires pour être utilisées.
+
 ```{r, echo=F}
 temp_data <- Veh[, !names(Veh) %in% c("VehModel", "VehGroup")]
 ```
 
-Il n'est pas possible d'utiliser les cas complets pour analyser les données manquantes dans notre jeu de données car les données manquantes ne sont pas manquantes complètement au hasard (MCAR). En effet, il existe une certaine structure dans les données manquantes, ce qui peut introduire un biais important dans l'analyse si les observations manquantes sont simplement ignorées. Par conséquent, nous avons choisi d'utiliser le package **mice** pour effectuer une imputation par forêt aléatoire (voir annexe), qui permet de prendre en compte la structure des données manquantes et de minimiser les biais potentiels introduits par l'imputation.
+Il n'est pas possible d'utiliser les cas complets pour analyser les données manquantes dans notre jeu de données, car les données manquantes ne sont pas manquantes complètement au hasard (MCAR). En effet, il existe une certaine structure dans les données manquantes, ce qui peut introduire un biais important dans l'analyse si les observations manquantes sont simplement ignorées. Par conséquent, nous avons choisi d'utiliser le package **mice** pour effectuer une imputation par forêt aléatoire (voir annexe), qui permet de prendre en compte la structure des données manquantes et de minimiser les biais potentiels introduits par l'imputation.
+
 ```{r, echo=F}
 ## BEAUCOUP TROP LONG À RUN
 #imp <- mice(temp_data, m = 1, method = "polyreg")
@@ -489,7 +492,7 @@ temp_data$DrivAge[is.na(temp_data$DrivAge)] <- sample(temp_data$DrivAge[!is.na(t
 #>>>>>>> c321a0f7888f9e9e86bc1497d1cde6d30f4b0dc5
 ```
 
-Après avoir effectué l'imputation des données manquantes à l'aide du package mice, toutes les valeurs manquantes ont été remplacées dans le jeu de données. Par conséquent, le jeu de données est désormais complet et prêt à être utilisé pour l'analyse.
+Après avoir effectué l'imputation des données manquantes, toutes les valeurs manquantes ont été remplacées dans le jeu de données : ce dernier est désormais complet et prêt à être utilisé pour l'analyse.
 
 
 \clearpage
