@@ -30,12 +30,15 @@ options(scipen=999)
 
 # Introduction
 
-Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisée s'appelle *brvehins1a* et est basée sur une partie de l'*AUTOSEG*, un système de statistiques sur les automobiles assurées au Brésil. Sa structure est très intuitive. En bref, chaque profil véhicule-assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonnes homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. 
+Pour ce travail, l'objectif est de construire un modèle de prime pure pour la somme des réclamations en assurance automobile (tous types confondus). La base de données utilisée s'appelle *brvehins1a* et est basée sur une partie de l'*AUTOSEG*, un système de statistiques sur les automobiles assurées au Brésil [SUSEP - Superintendência de Seguros Privados, 2013]. Sa structure est très intuitive. En bref, chaque profil véhicule-assuré est associé à une ligne. Chacune des lignes renferme l'ensemble des informations connues sur l'assuré et sur les montants de réclamations dont il est responsable en date de la production du jeu de données. Puisque les mêmes informations sont demandées pour chaque client, les lignes sont divisées en colonnes homogènes, ce qui nous permet de faire une analyse efficace du comportement des données. 
 
 En tout, chaque ligne comporte 23 variables, dont 5 variables décrivant les montants de réclamations, chacune étant associée à un type de dommage spécifique (par exemple une collision ou un vol de la voiture). Nous avons choisi de nous intéresser au montant total des réclamations pour un client et c'est donc la somme des 5 types de réclamations possibles qui sera notre variable réponse. Notre modèle utilisera les informations collectés par le système pour établir une prédiction de l'ensemble des coûts de réclamations que le client engendrera pour une exposition unitaire. À cette fin, il y a 9 variables explicatives sur lesquelles concentrer nos efforts. En effet, les autres variables sont dépendantes ou encore collige l'information rétrospectivement par rapport aux montants de réclamations.
 
 Pour ces données, la documentation d'*AUTOSEG* indique que l'exposition se mesure en année-véhicule. Une exposition unitaire correspond donc à un véhicule assuré pendant une année. Nous pourrons donc l'utiliser pour caliber nos modèles. Ce type d'analyse pourrait avoir plusieurs utilités, notamment pour implanter une tarification avantageuse ou encore pour faire des études de marchés.
 
+\vspace*{\fill}
+
+[SUSEP - Superintendência de Seguros Privados, 2013] SUSEP - Superintendência de Seguros Privados, (2013). Autoseg - Sistema de estatísticas de automóveis da susep. https://www2.susep.gov.br/menuestatistica/Autoseg/principal.aspx.
 
 \clearpage  
 
@@ -516,6 +519,14 @@ Après avoir effectué l'imputation des données manquantes, toutes les valeurs 
 
 En guise de conclusion, il importe de garder en tête que l'analyse suivante a pour but ultime de créer un modèle de prime pure pouvant être utilisé à des fins de tarification par des assureurs en amérique du Sud. Malheureusement, toutes les variables explicatrices n'ont pas été colligées exhaustivement dans le jeu de données et il a donc été nécessaire d'imputer stochastiquement les valeurs d'une proportion non négligeable de nos assurés pour les variables *Gender*, *DrivAge* et *VehManuf*. Il aurait clairement été préférable de travailler avec la bonne information directement, mais dans les circonstances, il s'agit de la meilleure avenue possible pour maintenir un niveau de variance acceptable et éviter d'introduire de biais dans nos résultats. 
 Pour les prochaines étapes de cette analyse, puisque nous souhaitons modéliser la prime pure, une distribution tweedie pourrait s'avérer particulièrement appropriée, car beaucoup d'assurés n'ont pas effectué de réclamations. Effectivement, cette distribution est connue pour ses capacités à bien modéliser à la fois une proportion significative de réclamations inexistantes (donc lorsque la variable endogène est 0) et des seuils élevés. De plus, cela permet de ne pas développer deux modèles distincts pour la fréquence et la sévérité. 
+
+\clearpage
+
+# Bibliographie 
+
+\setlength\parindent{24pt}
+
+[SUSEP - Superintendência de Seguros Privados, 2013] SUSEP - Superintendência de Seguros Privados, \hspace*{\parindent}(2013). Autoseg - Sistema de estatísticas de automóveis da susep. https://www2.susep.gov.br/menues \hspace*{\parindent}tatistica/Autoseg/principal.aspx.
 
 \clearpage
 
