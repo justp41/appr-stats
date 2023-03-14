@@ -1,4 +1,4 @@
-﻿---
+---
 output:
   pdf_document:
     includes:
@@ -473,7 +473,7 @@ Par conséquent, nous avons décidé de retirer les variables VehModel et VehGro
 temp_data <- Veh[, !names(Veh) %in% c("VehModel", "VehGroup")]
 ```
 
-Il n'est pas possible d'utiliser les cas complets pour analyser les données manquantes dans notre jeu de données car les données manquantes ne sont pas manquantes complètement au hasard (MCAR). En effet, il existe une certaine structure dans les données manquantes, ce qui peut introduire un biais important dans l'analyse si les observations manquantes sont simplement ignorées. Par conséquent, nous avons choisi d'utiliser le package **mice** pour effectuer une imputation par forêt aléatoire, qui permet de prendre en compte la structure des données manquantes et de minimiser les biais potentiels introduits par l'imputation.
+Il n'est pas possible d'utiliser les cas complets pour analyser les données manquantes dans notre jeu de données car les données manquantes ne sont pas manquantes complètement au hasard (MCAR). En effet, il existe une certaine structure dans les données manquantes, ce qui peut introduire un biais important dans l'analyse si les observations manquantes sont simplement ignorées. Par conséquent, nous avons choisi d'utiliser le package **mice** pour effectuer une imputation par forêt aléatoire (voir annexe), qui permet de prendre en compte la structure des données manquantes et de minimiser les biais potentiels introduits par l'imputation.
 ```{r, echo=F}
 ## BEAUCOUP TROP LONG À RUN
 #imp <- mice(temp_data, m = 1, method = "polyreg")
@@ -584,6 +584,6 @@ chisq.test(Veh$Area, manq, correct = F)
 ## Code de l'imputation des valeurs manquantes
 
 ```{r, message=FALSE, eval=FALSE}
-imp <- mice(temp_data, m = 1, method = "polyreg")
+imp <- mice(temp_data, m = 1, method = "rf")
 completedata <- complete(imp)
 ```
