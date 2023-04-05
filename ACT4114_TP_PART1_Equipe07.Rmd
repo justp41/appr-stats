@@ -172,6 +172,8 @@ Table 3 : Fréquences associées à la variable "Genre"
 
 En analysant le lien avec les réclamations à la Table 4, on remarque qu'il n'y a absolument aucune réclamation pour le genre *Corporate*. Étant donné la très grande exposition qui y est associée, c'est évidemment absurde et on en déduit que l'assureur demande l'information sur le conducteur lorsqu'un accident survient et qu'une réclamation est nécessaire. Ainsi, il ajoute l'information rétrospectivement. Pour faire des prédictions, il sera possiblement nécessaire de régrouper le genre *Corporate* avec les clients pour lesquels l'information sur le genre est inconnue. 
 
+
+
 \begin{center}
 Table 4 : Fréquences de non-réclamation pour la variable "Genre"
 
@@ -194,6 +196,10 @@ ggplot(VehClaimOnly, aes(x=Gender, y=LogClaim)) +
 ```
 
 Les moyennes des réclamations ne semblent pas changer d'un genre à un autre, mais il est possible d'observer à la Figure \ref{fig:BPGen} des réclamations plus élevées en moyenne lorsque le genre est inconnu. Il faut admettre que c'est plutôt surprenant de prime abord. Il convient de noter que c'est l'échantillon le plus faible des trois catégories, mais avec plus de 10 000 réclamations, il est difficile de blâmer le hasard. Une analyse du patron de non-réponse inclaunt les autres variables s'impose.
+
+```{r removecorporate, echo=FALSE, message=FALSE}
+Veh <- Veh[!Veh$Gender == 'Corporate' | is.na(Veh$Gender),]
+```
 
 \clearpage 
 
@@ -490,6 +496,7 @@ Nous avons remarqué que la variable *VehManuf* est plus sommative que les varia
 Par conséquent, nous avons décidé de retirer les variables *VehModel* et *VehGroup* du jeu de données pour simplifier l'imputation des données manquantes et l'analyse ultérieure. De plus, cette action permet de réduire la dimensionnalité du jeu de données, ce qui peut conduire à des modèles plus simples et plus facilement interprétables. Certains tests supplémentaires pourront être faits lors du développement du modèle afin de déterminer si les variables sont bel et bien, commme on le pense, trop spécifiques et granulaires pour être utilisées.
 
 ```{r, echo=F}
+Veh <- Veh[, !names(Veh) %in% c("VehModel", "VehGroup")]
 temp_data <- Veh[, !names(Veh) %in% c("VehModel", "VehGroup")]
 ```
 
@@ -555,28 +562,6 @@ Taille du jeu de données: 393071 observation et 23 variables.
 
 ## Tests du khi-carré de Pearson
 
-### Patron de non-réponse de la variable «VehModel»
-```{r, message=FALSE}
-manq <- is.na(Veh$VehModel)
-chisq.test(Veh$Gender, manq, correct = F)
-chisq.test(Veh$DrivAge, manq, correct = F)
-chisq.test(Veh$State, manq, correct = F)
-chisq.test(Veh$VehYear, manq, correct = F)
-```
-
-\clearpage
-
-### Patron de non-réponse de la variable «VehGroup»
-```{r, message=FALSE}
-manq <- is.na(Veh$VehGroup)
-chisq.test(Veh$Gender, manq, correct = F)
-chisq.test(Veh$DrivAge, manq, correct = F)
-chisq.test(Veh$State, manq, correct = F)
-chisq.test(Veh$VehYear, manq, correct = F)
-```
-
-\clearpage
-
 ### Patron de non-réponse de la variable «VehManuf»
 ```{r, message=FALSE}
 manq <- is.na(Veh$VehManuf)
@@ -613,6 +598,6 @@ chisq.test(Veh$Area, manq, correct = F)
 ## Code de l'imputation des valeurs manquantes
 
 ```{r, message=FALSE, eval=FALSE}
-imp <- mice(temp_data, m = 1, method = "rf")
+imp <- mice(Veh, m = 5, method = "rf")
 completedata <- complete(imp)
 ```
