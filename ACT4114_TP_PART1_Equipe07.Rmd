@@ -12,7 +12,7 @@ output:
 \tableofcontents   
 
 \justify  
-\clearpage  
+\clearpage 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -38,7 +38,8 @@ Pour ces données, la documentation d'*AUTOSEG* indique que l'exposition se mesu
 
 \vspace*{\fill}
 
-[SUSEP - Superintendência de Seguros Privados, 2013] SUSEP - Superintendência de Seguros Privados, (2013). Autoseg - Sistema de estatísticas de automóveis da susep. https://www2.susep.gov.br/menuestatistica/Autoseg/principal.aspx.
+
+[SUSEP - Superintendência de Seguros Privados, 2013] SUSEP - Superintendência de Seguros Privados, \hspace*{24pt}(2013). Autoseg - Sistema de estatísticas de automóveis da susep. https://www2.susep.gov.br/menues \hspace*{24pt}tatistica/Autoseg/principal.aspx.
 
 \clearpage  
 
@@ -531,9 +532,8 @@ Pour les prochaines étapes de cette analyse, puisque nous souhaitons modéliser
 
 # Bibliographie 
 
-\setlength\parindent{24pt}
 
-[SUSEP - Superintendência de Seguros Privados, 2013] SUSEP - Superintendência de Seguros Privados, \hspace*{\parindent}(2013). Autoseg - Sistema de estatísticas de automóveis da susep. https://www2.susep.gov.br/menues \hspace*{\parindent}tatistica/Autoseg/principal.aspx.
+[SUSEP - Superintendência de Seguros Privados, 2013] SUSEP - Superintendência de Seguros Privados, \hspace*{24pt}(2013). Autoseg - Sistema de estatísticas de automóveis da susep. https://www2.susep.gov.br/menues \hspace*{24pt}tatistica/Autoseg/principal.aspx.
 
 \clearpage
 
@@ -553,11 +553,11 @@ Mesure d'exposition: Temps pour lequel le risque a été assuré.
 
 Variables explicatives: Il y en a 9 si on ne considère pas les primes et l'exposition. En voici 5:
 
-Sexe, qualitative
-Âge du conducteur, ordinale
-Montant assuré, quantitative
-Modèle du véhicule, qualitative
-Endroit géographique, qualitative
+Sexe, qualitative.
+Âge du conducteur, ordinale.
+Montant assuré, quantitative.
+Modèle du véhicule, qualitative.
+Endroit géographique, qualitative.
 Taille du jeu de données: 393071 observation et 23 variables.
 
 ## Tests du khi-carré de Pearson
